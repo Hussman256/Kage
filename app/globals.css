@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens — ported verbatim from Kage.dc.html (Claude Design project) */
+:root,
+[data-theme="dark"] {
+  --canvas: #07030D; --inv: #0A0512; --invT: rgba(10,5,18,0); --bez1: #1A1226; --bez2: #0B0613;
+  --card: #130B22; --panel: #0F0819; --panel2: #0D0716; --ring: #14092a; --navBg: rgba(10,5,18,.92);
+  --ink: #FBFAF9; --ink2: #C9C2DB; --ink3: #A79DBE; --ink4: #8D83A3; --ink5: #7D7391; --ink6: #6B6280;
+  --purp: #836EF9; --purpHov: #9A88FF; --purpInk: #B3A4FF; --purpAlt: #5F4BD6; --linkHov: #A99BFF;
+  --grn: #59D9A0; --grn2: #7CE8B4; --g12: rgba(89,217,160,.12); --g16: rgba(89,217,160,.16);
+  --g30: rgba(89,217,160,.3); --g35: rgba(89,217,160,.35); --g40: rgba(89,217,160,.4);
+  --berryInk: #F08CBE; --berryInk2: #F5B8D4; --berryInk3: #E393BC;
+  --a08: rgba(251,250,249,.08); --a09: rgba(251,250,249,.09); --a10: rgba(251,250,249,.10);
+  --a11: rgba(251,250,249,.11); --a12: rgba(251,250,249,.12); --a13: rgba(251,250,249,.13);
+  --a14: rgba(251,250,249,.14); --a15: rgba(251,250,249,.15); --a16: rgba(251,250,249,.16);
+  --a22: rgba(251,250,249,.22); --a24: rgba(251,250,249,.24);
+  --scrim1: rgba(7,3,13,.94); --scrim2: rgba(7,3,13,.55); --scrimT: rgba(7,3,13,0);
+  --shadow1: rgba(0,0,0,.9); --shadow2: rgba(0,0,0,.7);
+  --wash1: rgba(131,110,249,.20); --wash2: rgba(131,110,249,.05); --grid: rgba(131,110,249,.055);
+  --berryWash1: rgba(160,5,93,.16); --berryWash2: rgba(160,5,93,.04);
+  --markShadow: rgba(131,110,249,.30); --rowShadow: rgba(131,110,249,.13);
+}
+[data-theme="light"] {
+  --canvas: #EFEAE4; --inv: #FBFAF9; --invT: rgba(251,250,249,0); --bez1: #E6E0D9; --bez2: #CDC6BE;
+  --card: #FFFFFF; --panel: #FFFFFF; --panel2: #FBFAF9; --ring: #FFFFFF; --navBg: rgba(251,250,249,.94);
+  --ink: #0E100F; --ink2: #45404E; --ink3: #565163; --ink4: #605A6E; --ink5: #6B6579; --ink6: #6B6579;
+  --purp: #5B41E0; --purpHov: #4A32C8; --purpInk: #4A32C8; --purpAlt: #4A32C8; --linkHov: #4A32C8;
+  --grn: #0B7D56; --grn2: #0B7D56; --g12: rgba(11,125,86,.10); --g16: rgba(11,125,86,.12);
+  --g30: rgba(11,125,86,.32); --g35: rgba(11,125,86,.34); --g40: rgba(11,125,86,.38);
+  --berryInk: #A0055D; --berryInk2: #8C044F; --berryInk3: #8C044F;
+  --a08: rgba(14,16,15,.10); --a09: rgba(14,16,15,.11); --a10: rgba(14,16,15,.12);
+  --a11: rgba(14,16,15,.13); --a12: rgba(14,16,15,.14); --a13: rgba(14,16,15,.15);
+  --a14: rgba(14,16,15,.16); --a15: rgba(14,16,15,.17); --a16: rgba(14,16,15,.18);
+  --a22: rgba(14,16,15,.24); --a24: rgba(14,16,15,.26);
+  --scrim1: rgba(239,234,228,.92); --scrim2: rgba(239,234,228,.45); --scrimT: rgba(239,234,228,0);
+  --shadow1: rgba(14,16,15,.16); --shadow2: rgba(14,16,15,.22);
+  --wash1: rgba(131,110,249,.16); --wash2: rgba(131,110,249,.05); --grid: rgba(131,110,249,.09);
+  --berryWash1: rgba(160,5,93,.10); --berryWash2: rgba(160,5,93,.03);
+  --markShadow: rgba(131,110,249,.45); --rowShadow: rgba(131,110,249,.16);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--inv);
+  color: var(--ink);
+  transition: background .25s ease, color .25s ease;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+a { color: var(--purp); text-decoration: none; }
+a:hover { color: var(--linkHov); }
+
+@keyframes kagePulse { 0%,100% { opacity: .35; transform: scale(1); } 50% { opacity: 1; transform: scale(1.35); } }
+@keyframes kageSweep { 0% { transform: translateY(-100%); } 100% { transform: translateY(300%); } }
+@keyframes kageDrift { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-14px,0); } }
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .animate-kage-pulse { animation: kagePulse 2.2s ease-in-out infinite; }
+  .animate-kage-drift { animation: kageDrift 7s ease-in-out infinite; }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+}
