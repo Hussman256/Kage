@@ -13,7 +13,14 @@ export const orderBookAbi = parseAbi([
   "function addBuyOrder(uint32 _price, uint96 size, bool _postOnly)",
   "function addSellOrder(uint32 _price, uint96 size, bool _postOnly)",
   "function batchCancelOrders(uint40[] _orderIds)",
+  // Live state of a resting order; filled/cancelled orders read back as size 0.
+  "function s_orders(uint40) view returns (address ownerAddress, uint96 size, uint40 prev, uint40 next, uint40 flippedId, uint32 price, uint32 flippedPrice, bool isBuy)",
 ]);
+
+export async function getOrderRemaining(market: Address, orderId: bigint, params: MarketParams) {
+  const o = await publicClient.readContract({ address: market, abi: orderBookAbi, functionName: "s_orders", args: [Number(orderId)] });
+  return { owner: o[0], remaining: sizeAmount(o[1], params) };
+}
 
 // Trade.price and bestBidAsk() are always 1e18-scaled, regardless of market.
 const WAD_DECIMALS = 18;

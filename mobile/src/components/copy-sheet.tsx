@@ -228,7 +228,7 @@ export function CopySheet({
                     `${order.isBuy ? "BUY" : "SELL"} LIMIT @ ${fmtPrice(preflight?.plan.price ?? order.price, 6)}`,
                     order.isBuy ? t.grn : t.berryInk,
                   ],
-                  ["CANCEL IF PRICE MOVES >", settings.driftGuard ? `${settings.driftGuardPct}%` : "OFF", settings.driftGuard ? t.ink : t.ink4],
+                  ["DRIFT GUARD", settings.driftGuard ? `${settings.driftGuardPct}%` : "OFF", settings.driftGuard ? t.ink : t.ink4],
                   ["SIGNED BY", session.address ? `YOUR WALLET · ${shortAddr(session.address)}` : "YOUR WALLET (SIGN IN)", t.ink],
                 ].map(([k, v, c]) => (
                   <View key={k} style={{ flexDirection: "row", justifyContent: "space-between", gap: 12 }}>

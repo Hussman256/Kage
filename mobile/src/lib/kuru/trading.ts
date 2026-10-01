@@ -12,6 +12,7 @@ export const marginAccountAbi = parseAbi([
   "function deposit(address _user, address _token, uint256 _amount) payable",
   "function withdraw(uint256 _amount, address _token)",
   "function getBalance(address _user, address _token) view returns (uint256)",
+  "function batchWithdrawMaxTokens(address[] _tokens)",
 ]);
 
 // Native MON left in the wallet for gas. Monad gas is cheap; this is generous.

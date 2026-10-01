@@ -54,15 +54,18 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - **Copy sizing:** source size × ratio, capped by max order size, checked against Kuru's minimum (200 MON).
 - **Passkey login code written** (Privy Expo SDK): login-or-signup flow, session restore on splash, wallet address + Log out in Settings, real address on the copy sheet. **Inactive until setup (see §5).** Expo Go runs a labelled preview mode because Privy's native passkey module can't load there.
 - **Bot filter v2** (`mobile/src/lib/kuru/bots.ts`): excludes market makers, vanity addresses (`0x0000…`, i.e. arbitrage bots) and machine-speed takers (100+ fills/hour) from both the leaderboard and the feed.
+- **Order placement (code-complete, dry-run tested):** `trading.ts` plans exact txs (exact-amount USDC approve, deposit only the shortfall, limit order; price rounded to tick in the user's favour); `dry-run.ts` has the live contract validate with the margin balance state-overridden; `guards.ts` drift guard + persisted 6/min rate limit; `execute.ts` signs steps via the session's Privy `sender`, reports filled vs resting, never claims an unconfirmed tx failed; copy sheet shows CHECKS + step progress; result screen shows filled/resting + tx link.
+- **Book on real copies** (`copies.tsx` ledger + live `s_orders` state every 10 s): fill progress, cancel / cancel all (`batchCancelOrders`), stale flags (EXPIRED after 10 min, PRICE MOVED past guard) with one-tap cancel. **Kage never signs in the background** (passkey per tx), so expiry/drift guards flag rather than auto-cancel — Risk screen wording says so.
+- **Withdraw:** Settings → KURU shows margin balances (USDC, MON) and "Withdraw all to wallet" (`batchWithdrawMaxTokens`).
+- Sample data removed entirely except Rooms (P1, static, labelled).
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
-- **Order placement — core done, Book/cancel/expiry next.** Done: `trading.ts` (plans exact txs: exact-amount USDC approve → deposit only the shortfall → limit order; price rounded to tick in user's favour), `dry-run.ts` (contract validates with margin balance state-overridden), `guards.ts` (drift guard, 6/min rate limit persisted), `execute.ts` (sends steps via injected wallet sender, waits for receipts, parses filled vs resting; "UNCONFIRMED" never claimed as failed), copy sheet shows CHECKS + step progress, result screen shows filled/resting + tx link, `copies.tsx` ledger of placed copies. Session exposes a Privy `sender` (EIP-1193 eth_sendTransaction). Not signed in / paper mode → paper copy. **Next:** Book screen on real copies (from `copies.tsx` + chain), cancel (batchCancelOrders), expire-unfilled-after-10-min, withdraw from Kuru balance.
+- Nothing mid-way. Order placement is code-complete; real signing waits only on passkey login (§5).
 
 ### ⏳ Not started / later
 - **Envio indexer** (P0 in brief) — needed for 24H/7D leaderboards, history, real Book data at scale.
 - **Nansen integration** — needs an API key (ask hackathon sponsor desk / Discord). Swaps "Top PnL (beta)" for Nansen labels on the same screens.
-- **Book screen on real data** (still sample, labelled).
 - **Rooms** (P1, sample, labelled).
 - **App icon + splash image** (still Expo defaults).
 - **Deploy the web app to usekage.xyz** with `assetlinks.json` + APK download page.
@@ -72,10 +75,9 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 
 ## 4. Next steps (in order)
 
-1. Finish order placement: Book on real copies, cancel / cancel-all, 10-min expiry, withdraw.
-2. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
-3. Book on real data; Envio indexer; Nansen (when key arrives).
-4. App icon/splash, preview APK, website download page, demo, submission.
+1. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
+2. Envio indexer (24H/7D leaderboards); Nansen (when key arrives).
+3. App icon/splash, preview APK, website download page, demo, submission.
 
 ---
 
@@ -157,3 +159,4 @@ cd /c/Users/pc/Kage && npm run dev
 | 09-29 | **D2/D3:** Expo app scaffolded in `mobile/`; all 10 screens ported; running on user's Android phone via Expo Go. Settings + appearance (**D7**). |
 | 09-30 | Passkey login code (Privy) written, gated on setup. **D5** domain/app ID. Real Smart money leaderboard + trader pages. **D4** feed switched to copying trades; follows persisted. `MEMORY.md` created. |
 | 10-01 | All work committed on branch **`expo-app`**, authored as Hussman256, and **pushed to GitHub** (user signed in as Hussman256; this PC's other GitHub login, Anambraboi-1, has no access). Bot filter v2; order planning, dry-run, guards, execution flow, copies ledger. |
+| 10-01 | Order placement code-complete: Book on real copies, cancel / cancel all, stale flags, withdraw. Pushed. |

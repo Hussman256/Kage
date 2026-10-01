@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import type { ReactNode } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KuruFundsSection } from "@/components/kuru-funds";
 import { Mono, T } from "@/components/ui";
 import { AppearancePicker } from "@/components/visuals";
 import { previewReason, useSession } from "@/lib/auth";
@@ -61,6 +62,8 @@ export default function Settings() {
           )}
         </Pressable>,
       )}
+
+      {session.authenticated && section("KURU", <KuruFundsSection />)}
 
       {section(
         "ACCOUNT",

@@ -41,7 +41,7 @@ export default function Risk() {
         </Pressable>
         <T style={{ marginTop: 14, fontSize: 30, fontFamily: fonts.semibold, letterSpacing: -1.05 }}>Risk</T>
         <T style={{ marginTop: 10, fontSize: 14, lineHeight: 21, color: t.ink4, fontFamily: fonts.light }}>
-          These limits apply to every copy, on every shadow you follow.
+          These limits apply to every copy, on every shadow you follow. Kage never signs for you in the background — stale copies are flagged for a one-tap cancel.
         </T>
       </View>
 
@@ -84,8 +84,8 @@ export default function Risk() {
         <View style={[card, { gap: 16 }]}>
           {/* Copies follow trades, not resting orders, so there's no source order to
               mirror a cancel from — stale copies expire instead. */}
-          {toggleRow("Expire unfilled copies", "CANCEL IF NOT FILLED IN 10 MIN", settings.autoCancel, "autoCancel", true)}
-          {toggleRow("Price-drift guard", `CANCEL IF MID MOVES > ${settings.driftGuardPct}%`, settings.driftGuard, "driftGuard")}
+          {toggleRow("Expire unfilled copies", "FLAG FOR ONE-TAP CANCEL AFTER 10 MIN", settings.autoCancel, "autoCancel", true)}
+          {toggleRow("Price-drift guard", `BLOCK OR FLAG IF PRICE MOVES > ${settings.driftGuardPct}%`, settings.driftGuard, "driftGuard")}
           {toggleRow("Rate limit", "MAX 6 COPIES PER MINUTE", settings.rateLimit, "rateLimit")}
         </View>
 
