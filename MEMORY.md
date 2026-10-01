@@ -57,7 +57,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
-- **Order placement** — Kuru margin-account deposit, place/cancel limit orders, guards (max size, rate limit, drift guard, expiry), dry-run testable; final signature waits on passkey login.
+- **Order placement — core done, Book/cancel/expiry next.** Done: `trading.ts` (plans exact txs: exact-amount USDC approve → deposit only the shortfall → limit order; price rounded to tick in user's favour), `dry-run.ts` (contract validates with margin balance state-overridden), `guards.ts` (drift guard, 6/min rate limit persisted), `execute.ts` (sends steps via injected wallet sender, waits for receipts, parses filled vs resting; "UNCONFIRMED" never claimed as failed), copy sheet shows CHECKS + step progress, result screen shows filled/resting + tx link, `copies.tsx` ledger of placed copies. Session exposes a Privy `sender` (EIP-1193 eth_sendTransaction). Not signed in / paper mode → paper copy. **Next:** Book screen on real copies (from `copies.tsx` + chain), cancel (batchCancelOrders), expire-unfilled-after-10-min, withdraw from Kuru balance.
 
 ### ⏳ Not started / later
 - **Envio indexer** (P0 in brief) — needed for 24H/7D leaderboards, history, real Book data at scale.
@@ -72,7 +72,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 
 ## 4. Next steps (in order)
 
-1. Order placement code (deposit → limit order → cancel; guards; dry-run).
+1. Finish order placement: Book on real copies, cancel / cancel-all, 10-min expiry, withdraw.
 2. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
 3. Book on real data; Envio indexer; Nansen (when key arrives).
 4. App icon/splash, preview APK, website download page, demo, submission.

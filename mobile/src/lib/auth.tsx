@@ -1,5 +1,6 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import type { TxSender } from "@/lib/kuru/execute";
 
 // One session shape for the whole app, whether sign-in is real (Privy
 // passkeys in the dev build) or unavailable (Expo Go, or setup incomplete).
@@ -28,10 +29,11 @@ export type Session = {
   ready: boolean;
   authenticated: boolean;
   address: string | null; // embedded wallet
+  sender: TxSender | null; // signs with the user's embedded wallet; null until signed in
   logout: () => Promise<void>;
 };
 
-const previewSession: Session = { ready: true, authenticated: false, address: null, logout: async () => {} };
+const previewSession: Session = { ready: true, authenticated: false, address: null, sender: null, logout: async () => {} };
 
 const SessionContext = createContext<{ session: Session; setSession: (s: Session) => void }>({
   session: previewSession,
@@ -40,7 +42,7 @@ const SessionContext = createContext<{ session: Session; setSession: (s: Session
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session>(
-    authEnabled ? { ready: false, authenticated: false, address: null, logout: async () => {} } : previewSession,
+    authEnabled ? { ready: false, authenticated: false, address: null, sender: null, logout: async () => {} } : previewSession,
   );
   return <SessionContext.Provider value={{ session, setSession }}>{children}</SessionContext.Provider>;
 }

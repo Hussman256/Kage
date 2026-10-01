@@ -2,12 +2,11 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CopySheet, type CopySource } from "@/components/copy-sheet";
+import { CopySheet, type CopyOutcome, type CopySource } from "@/components/copy-sheet";
 import { PulseDot } from "@/components/pulse-dot";
 import { ReadyModal } from "@/components/ready-modal";
 import { Avatar, Chip, DataBadge, Mono, SideChip, T } from "@/components/ui";
 import { SettingsButton } from "@/components/visuals";
-import type { CopySize } from "@/lib/copy-sizing";
 import { useFollows } from "@/lib/follows";
 import { fmtAge, fmtAmount, fmtPrice, shortAddr } from "@/lib/format";
 import type { LiveTrade } from "@/lib/kuru/live-trades";
@@ -40,7 +39,7 @@ export default function Feed() {
   const now = useNow();
   const [scope, setScope] = useState<"following" | "all" | null>(null);
   const [copying, setCopying] = useState<CopySource | null>(null);
-  const [ready, setReady] = useState<{ order: CopySource; copy: CopySize } | null>(null);
+  const [outcome, setOutcome] = useState<CopyOutcome | null>(null);
 
   // Default to Following once the user follows anyone.
   const active = scope ?? (follows.size > 0 ? "following" : "all");
@@ -54,6 +53,8 @@ export default function Feed() {
   };
 
   const toCopySource = (x: LiveTrade): CopySource => ({
+    market: x.market,
+    trader: x.trader,
     who: shortAddr(x.trader),
     label: labelFor(x.trader),
     isBuy: x.isBuy,
@@ -184,12 +185,12 @@ export default function Feed() {
         key={copying ? `${copying.who}:${copying.price}:${copying.size}` : "closed"}
         order={copying}
         onClose={() => setCopying(null)}
-        onConfirm={(order, copy) => {
+        onDone={(o) => {
           setCopying(null);
-          setReady({ order, copy });
+          setOutcome(o);
         }}
       />
-      <ReadyModal ready={ready} onClose={() => setReady(null)} />
+      <ReadyModal outcome={outcome} onClose={() => setOutcome(null)} />
     </View>
   );
 }

@@ -3,6 +3,8 @@
 import { PrivyProvider, useEmbeddedEthereumWallet, usePrivy } from "@privy-io/expo";
 import { useLoginWithPasskey, useSignupWithPasskey } from "@privy-io/expo/passkey";
 import { useEffect, type ReactNode } from "react";
+import { toHex, type Address, type Hash } from "viem";
+import type { TxSender } from "@/lib/kuru/execute";
 import { monad } from "@/lib/monad";
 import { PASSKEY_RELYING_PARTY, PRIVY_APP_ID, PRIVY_CLIENT_ID, useSetSession } from "./auth";
 
@@ -11,11 +13,27 @@ function SessionBridge() {
   const { isReady, user, logout } = usePrivy();
   const { wallets } = useEmbeddedEthereumWallet();
   const setSession = useSetSession();
-  const address = wallets[0]?.address ?? null;
+  const wallet = wallets[0];
+  const address = wallet?.address ?? null;
 
   useEffect(() => {
-    setSession({ ready: isReady, authenticated: !!user, address, logout });
-  }, [isReady, user, address, logout, setSession]);
+    // Every transaction goes through the embedded wallet's EIP-1193 provider,
+    // so Privy prompts the user (passkey) to sign each one.
+    const sender: TxSender | null = wallet
+      ? {
+          address: wallet.address as Address,
+          sendTransaction: async ({ to, data, value }) => {
+            const provider = await wallet.getProvider();
+            const hash = await provider.request({
+              method: "eth_sendTransaction",
+              params: [{ from: wallet.address, to, data, value: toHex(value), chainId: toHex(monad.id) }],
+            });
+            return hash as Hash;
+          },
+        }
+      : null;
+    setSession({ ready: isReady, authenticated: !!user, address, sender, logout });
+  }, [isReady, user, wallet, address, logout, setSession]);
 
   return null;
 }

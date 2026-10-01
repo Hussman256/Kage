@@ -6,6 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, type ReactNode } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { authEnabled, SessionProvider } from "@/lib/auth";
+import { CopiesProvider } from "@/lib/copies";
 import { FollowsProvider } from "@/lib/follows";
 import { ThemeProvider, useTheme } from "@/theme/theme";
 
@@ -58,8 +59,10 @@ export default function RootLayout() {
         <SessionProvider>
           <AuthProvider>
             <FollowsProvider>
-              {/* On a font load failure, fall back to system fonts rather than a blank app. */}
-              <Root fontsReady={fontsLoaded || !!fontError} />
+              <CopiesProvider>
+                {/* On a font load failure, fall back to system fonts rather than a blank app. */}
+                <Root fontsReady={fontsLoaded || !!fontError} />
+              </CopiesProvider>
             </FollowsProvider>
           </AuthProvider>
         </SessionProvider>
