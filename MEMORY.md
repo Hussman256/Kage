@@ -8,7 +8,7 @@
 > **Keep it current:** update the Status, Checkpoint log, and Next steps sections at every
 > checkpoint. Never put secrets here (API keys, private keys) — public IDs only.
 
-_Last updated: 2026-09-30_
+_Last updated: 2026-10-01_
 
 ---
 
@@ -53,10 +53,10 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - **Feed switched to copying trades (D4)** with Following / All traders; **Follow** is persisted.
 - **Copy sizing:** source size × ratio, capped by max order size, checked against Kuru's minimum (200 MON).
 - **Passkey login code written** (Privy Expo SDK): login-or-signup flow, session restore on splash, wallet address + Log out in Settings, real address on the copy sheet. **Inactive until setup (see §5).** Expo Go runs a labelled preview mode because Privy's native passkey module can't load there.
+- **Bot filter v2** (`mobile/src/lib/kuru/bots.ts`): excludes market makers, vanity addresses (`0x0000…`, i.e. arbitrage bots) and machine-speed takers (100+ fills/hour) from both the leaderboard and the feed.
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
-- **Bot filter v2** — exclude vanity-address arbitrage bots (addresses starting `0x0000…`) and extreme-frequency takers from the leaderboard and feed. They currently slip past the maker-based filter (seen at #1 and #3 on the board).
 - **Order placement** — Kuru margin-account deposit, place/cancel limit orders, guards (max size, rate limit, drift guard, expiry), dry-run testable; final signature waits on passkey login.
 
 ### ⏳ Not started / later
@@ -72,11 +72,10 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 
 ## 4. Next steps (in order)
 
-1. Bot filter v2 (in progress).
-2. Order placement code (deposit → limit order → cancel; guards; dry-run).
-3. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
-4. Book on real data; Envio indexer; Nansen (when key arrives).
-5. App icon/splash, preview APK, website download page, demo, submission.
+1. Order placement code (deposit → limit order → cancel; guards; dry-run).
+2. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
+3. Book on real data; Envio indexer; Nansen (when key arrives).
+4. App icon/splash, preview APK, website download page, demo, submission.
 
 ---
 
@@ -157,4 +156,4 @@ cd /c/Users/pc/Kage && npm run dev
 | 09-28 | `CLAUDE.md` created. Design check vs artifact (5 mismatches found). Discovered testnet dead → **D1 mainnet**. Web app `/feed` reading live Kuru orders. |
 | 09-29 | **D2/D3:** Expo app scaffolded in `mobile/`; all 10 screens ported; running on user's Android phone via Expo Go. Settings + appearance (**D7**). |
 | 09-30 | Passkey login code (Privy) written, gated on setup. **D5** domain/app ID. Real Smart money leaderboard + trader pages. **D4** feed switched to copying trades; follows persisted. `MEMORY.md` created. |
-| 09-30 | ⚠️ All work after `b634bcc` is **uncommitted** at time of writing — commit & push to `origin` to make it safe. |
+| 10-01 | All work committed on branch **`expo-app`** (`234184a`), authored as Hussman256. Push waits on the user signing in to GitHub as Hussman256 (PC is logged in as Anambraboi-1, no access). Bot filter v2 added. |

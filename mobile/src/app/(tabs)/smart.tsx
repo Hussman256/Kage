@@ -68,7 +68,7 @@ export default function SmartMoney() {
 
       {data && (
         <Mono style={{ marginHorizontal: 22, marginBottom: 14, fontSize: 10.5, lineHeight: 16, color: t.ink6 }}>
-          {`${data.tradesSeen.toLocaleString("en-US")} FILLS IN THE LAST HOUR · ${data.botsExcluded} MARKET-MAKER BOTS EXCLUDED · MARKED AT ${data.mid.toFixed(5)}`}
+          {`${data.tradesSeen.toLocaleString("en-US")} FILLS IN THE LAST HOUR · ${data.botsExcluded} BOTS EXCLUDED · MARKED AT ${data.mid.toFixed(5)}`}
         </Mono>
       )}
 

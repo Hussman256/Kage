@@ -1,5 +1,6 @@
 import type { Address } from "viem";
 import { MAX_LOG_RANGE, publicClient } from "@/lib/monad";
+import { flagHighFrequency, HIGH_FREQ_FILLS_PER_HOUR, isVanityAddress } from "./bots";
 import { MARKETS, type KuruMarket } from "./markets";
 import { getBestBidAsk, getMarketParams, orderBookAbi, sizeAmount, wadPrice } from "./orderbook";
 
@@ -42,7 +43,7 @@ export type Leaderboard = {
   windowBlocks: number;
   headBlock: bigint;
   tradesSeen: number;
-  botsExcluded: number;
+  botsExcluded: number; // market makers + vanity-address and machine-speed takers
   fetchedAt: number;
 };
 
@@ -98,11 +99,20 @@ async function build(market: KuruMarket): Promise<Leaderboard> {
   // (their operators rebalancing through them).
   const bots = new Set(logs.map((l) => l.args.makerAddress!.toLowerCase()));
 
+  const vanity = new Set<string>();
+  const highFreq = new Set<string>();
+  // Scale the per-hour threshold to the window actually fetched.
+  const highFreqFills = (HIGH_FREQ_FILLS_PER_HOUR * WINDOW_BLOCKS * 400) / 3_600_000;
+
   type Acc = { address: Address; fills: Fill[] };
   const byTrader = new Map<string, Acc>();
   for (const l of logs) {
     const origin = l.args.txOrigin!;
     if (bots.has(origin.toLowerCase()) || bots.has(l.args.takerAddress!.toLowerCase())) continue;
+    if (isVanityAddress(origin)) {
+      vanity.add(origin.toLowerCase());
+      continue;
+    }
     const key = origin.toLowerCase();
     const acc = byTrader.get(key) ?? { address: origin, fills: [] };
     acc.fills.push({
@@ -117,6 +127,11 @@ async function build(market: KuruMarket): Promise<Leaderboard> {
 
   const traders: TraderStats[] = [];
   for (const { address, fills } of byTrader.values()) {
+    if (fills.length >= highFreqFills) {
+      highFreq.add(address.toLowerCase());
+      flagHighFrequency(address); // the live feed hides them too
+      continue;
+    }
     fills.sort((a, b) => (a.block < b.block ? -1 : a.block > b.block ? 1 : 0));
     let cash = 0;
     let net = 0;
@@ -159,7 +174,7 @@ async function build(market: KuruMarket): Promise<Leaderboard> {
     windowBlocks: WINDOW_BLOCKS,
     headBlock: head,
     tradesSeen: logs.length,
-    botsExcluded: bots.size,
+    botsExcluded: bots.size + vanity.size + highFreq.size,
     fetchedAt: Date.now(),
   };
 }

@@ -1,5 +1,6 @@
 import type { Address, Hash } from "viem";
 import { MAX_LOG_RANGE, publicClient } from "@/lib/monad";
+import { isLikelyBot, isVanityAddress } from "./bots";
 import { MARKETS, marketByAddress } from "./markets";
 import { getMarketParams, orderBookAbi, sizeAmount, wadPrice, type MarketParams } from "./orderbook";
 
@@ -52,7 +53,9 @@ const estimateTime = (block: bigint) => (headRef ? headRef.time - Number(headRef
 
 function publish(patch: Partial<TradesSnapshot>) {
   const list = Array.from(trades.values())
-    .filter((t) => !bots.has(t.trader.toLowerCase())) // a wallet can turn out to be a bot later
+    // A wallet can turn out to be a bot later (seen making, or flagged
+    // machine-speed by the leaderboard), so filter at publish time.
+    .filter((t) => !bots.has(t.trader.toLowerCase()) && !isLikelyBot(t.trader))
     .sort((a, b) => (a.block === b.block ? 0 : a.block > b.block ? -1 : 1));
   snapshot = { ...snapshot, ...patch, trades: list };
   listeners.forEach((l) => l());
@@ -81,7 +84,7 @@ async function ingest(from: bigint, to: bigint, params: Map<string, MarketParams
     if (!market || !p) continue;
     const origin = log.args.txOrigin!;
     // Skip bots, including operators rebalancing through their own maker contracts.
-    if (bots.has(origin.toLowerCase()) || bots.has(log.args.takerAddress!.toLowerCase())) continue;
+    if (bots.has(origin.toLowerCase()) || bots.has(log.args.takerAddress!.toLowerCase()) || isVanityAddress(origin)) continue;
 
     const size = sizeAmount(log.args.filledSize!, p);
     const price = wadPrice(log.args.price!);
