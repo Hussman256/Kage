@@ -156,4 +156,4 @@ cd /c/Users/pc/Kage && npm run dev
 | 09-28 | `CLAUDE.md` created. Design check vs artifact (5 mismatches found). Discovered testnet dead → **D1 mainnet**. Web app `/feed` reading live Kuru orders. |
 | 09-29 | **D2/D3:** Expo app scaffolded in `mobile/`; all 10 screens ported; running on user's Android phone via Expo Go. Settings + appearance (**D7**). |
 | 09-30 | Passkey login code (Privy) written, gated on setup. **D5** domain/app ID. Real Smart money leaderboard + trader pages. **D4** feed switched to copying trades; follows persisted. `MEMORY.md` created. |
-| 10-01 | All work committed on branch **`expo-app`** (`234184a`), authored as Hussman256. Push waits on the user signing in to GitHub as Hussman256 (PC is logged in as Anambraboi-1, no access). Bot filter v2 added. |
+| 10-01 | All work committed on branch **`expo-app`**, authored as Hussman256, and **pushed to GitHub** (user signed in as Hussman256; this PC's other GitHub login, Anambraboi-1, has no access). Bot filter v2; order planning, dry-run, guards, execution flow, copies ledger. |
