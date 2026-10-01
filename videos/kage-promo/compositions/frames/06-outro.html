@@ -1,0 +1,56 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Geist"; font-weight: 800; src: url("assets/fonts/Geist_800ExtraBold.ttf"); }
+    @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("assets/fonts/GeistMono_400Regular.ttf"); }
+    @font-face { font-family: "KageMark"; src: url("assets/fonts/KageMark-Black.ttf"); }
+    #root { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; color: #0E100F; font-family: "Geist", sans-serif; }
+    #f06-bg { position: absolute; inset: 0; background: #FBFAF9; }
+    #f06-wash { position: absolute; left: 360px; top: -120px; width: 1200px; height: 1000px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(91,65,224,.10), rgba(91,65,224,0)); }
+    #f06-markwrap { position: absolute; left: 835px; top: 120px; width: 250px; height: 250px; }
+    .f06-glyph { position: absolute; left: 0; top: 0; font-family: "KageMark", serif; font-size: 250px; line-height: 1; }
+    #f06-shadow { color: #5B41E0; }
+    #f06-name { position: absolute; left: 0; right: 0; top: 480px; text-align: center; font-size: 134px; font-weight: 800; letter-spacing: -.05em; line-height: 1; }
+    #f06-line { position: absolute; left: 0; right: 0; top: 640px; text-align: center; font-size: 65px; font-weight: 800; letter-spacing: -.03em; color: #45404E; }
+    #f06-line b { color: #5B41E0; font-weight: 800; }
+    #f06-foot { position: absolute; left: 0; right: 0; top: 840px; text-align: center; font-family: "Geist Mono", monospace; letter-spacing: .14em;
+      text-transform: uppercase; font-size: 18px; color: #6B6579; }
+  </style>
+
+  <div data-hf-id="hf-u7t7" id="root" data-composition-id="06-outro" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-ma2w" id="f06-bg" class="clip" data-start="0" data-duration="3.5" data-track-index="0"></div>
+    <div data-hf-id="hf-xp6l" id="f06-wash" class="clip" data-start="0" data-duration="3.5" data-track-index="1"></div>
+    <div data-hf-id="hf-3522" id="f06-markwrap" class="clip" data-layout-allow-overlap="" data-start="0" data-duration="3.5" data-track-index="2">
+      <div data-hf-id="hf-6b9t" id="f06-shadow" class="f06-glyph" data-layout-allow-overlap="">影</div>
+      <div data-hf-id="hf-ri7z" id="f06-glyph" class="f06-glyph" data-layout-allow-overlap="">影</div>
+    </div>
+    <div data-hf-id="hf-pcrf" id="f06-name" class="clip" data-start="0" data-duration="3.5" data-track-index="3">Kage</div>
+    <div data-hf-id="hf-1d12" id="f06-line" class="clip" data-start="0" data-duration="3.5" data-track-index="4">Shadow the <b data-hf-id="hf-5df6">smartest</b> money.</div>
+    <div data-hf-id="hf-aj5e" id="f06-foot" class="clip" data-start="0" data-duration="3.5" data-track-index="5">Building on Kuru · Monad mainnet · Android</div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.0–0.8): 影 settles in; its purple shadow slides out to the offset.
+      tl.fromTo("#f06-wash", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.out" }, 0);
+      tl.fromTo(["#f06-glyph", "#f06-shadow"], { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 0);
+      tl.fromTo("#f06-shadow", { x: 0, y: 0 }, { x: 22, y: 22, duration: 0.6, ease: "power3.out" }, 0.4);
+
+      // Scene 2 (0.8–1.5): name rises.
+      tl.fromTo("#f06-name", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.8);
+
+      // Scene 3 (1.5–2.2): tagline rises.
+      tl.fromTo("#f06-line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 1.5);
+
+      // Scene 4 (2.2–3.5): footer fades in; hold still to the end.
+      tl.fromTo("#f06-foot", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 2.2);
+
+      tl.set({}, {}, 3.5);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["06-outro"] = tl;
+    })();
+  </script>
+</template>

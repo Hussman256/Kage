@@ -1,0 +1,8 @@
+Kage 影 — copy the shadow of the smartest money on Monad.
+Hook (real on-chain stat, Kuru MON/USDC, one sampled hour): 61,894 limit orders came from 5 wallets. 4 of them are market-making bots. Everyone else placed 1.
+Real traders don't place orders — they take them (~90 real wallets, ~1,100 trades that hour).
+So Kage copies what real traders actually do: their fill becomes your own limit order, at their price. It never chases the price.
+Smart money board: real Kuru traders ranked by on-chain PnL, bots filtered (Top PnL beta; Nansen labels next).
+One-tap copy sheet: order validated by the Kuru contract before you sign. Passkey wallet via Privy — no seed phrase. Every order signed by you.
+Risk guards: max order size, price-drift guard, rate limit.
+Building on Kuru · Monad mainnet · Monad Metropolis. Android app.

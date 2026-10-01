@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kage promo — storyboard v2 (light)</title>
+<style>
+  @font-face { font-family: "Geist"; font-weight: 400; src: url("../../mobile/node_modules/@expo-google-fonts/geist/400Regular/Geist_400Regular.ttf"); }
+  @font-face { font-family: "Geist"; font-weight: 600; src: url("../../mobile/node_modules/@expo-google-fonts/geist/600SemiBold/Geist_600SemiBold.ttf"); }
+  @font-face { font-family: "Geist"; font-weight: 800; src: url("../../mobile/node_modules/@expo-google-fonts/geist/800ExtraBold/Geist_800ExtraBold.ttf"); }
+  @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("../../mobile/node_modules/@expo-google-fonts/geist-mono/400Regular/GeistMono_400Regular.ttf"); }
+  @font-face { font-family: "KageMark"; src: url("../../mobile/assets/fonts/KageMark-Black.ttf"); }
+
+  :root {
+    --ink: #FBFAF9; --ink2: #F1EDE8; --cream: #0E100F; --muted: #45404E; --hint: #6B6579;
+    --purp: #5B41E0; --berry: #A0055D; --berry-deep: #A0055D; --line: rgba(14,16,15,.12);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #EFEAE4; color: var(--cream); font-family: Geist, system-ui, sans-serif; padding: 48px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 36px; }
+  header h1 { font-size: 34px; font-weight: 800; letter-spacing: -.03em; }
+  header h1 span { color: var(--purp); }
+  header p { color: var(--muted); font-size: 15px; margin-top: 6px; }
+  .tag { font-family: "Geist Mono", monospace; font-size: 12px; letter-spacing: .12em; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; white-space: nowrap; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px 28px; }
+  .item { display: flex; flex-direction: column; gap: 10px; }
+  .cell { aspect-ratio: 16 / 9; container-type: inline-size; position: relative; overflow: hidden; background: var(--ink); border-radius: 10px; border: 1px solid var(--line); }
+  .label { display: flex; justify-content: space-between; font-family: "Geist Mono", monospace; font-size: 11.5px; letter-spacing: .1em; color: var(--muted); }
+  .note { font-size: 13px; line-height: 1.5; color: var(--muted); }
+  .note b { color: var(--cream); font-weight: 600; }
+  .chip { align-self: flex-start; font-family: "Geist Mono", monospace; font-size: 10.5px; letter-spacing: .1em; color: var(--purp); border: 1px solid rgba(131,110,249,.4); border-radius: 999px; padding: 4px 10px; }
+
+  /* shared frame pieces, sized in cqw so the sketch matches the 1920×1080 build (1cqw = 19.2px) */
+  .mono { font-family: "Geist Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+  .hair { position: absolute; left: 4.2cqw; right: 4.2cqw; height: 1px; background: var(--line); }
+  .kicker { position: absolute; top: 4.2cqw; left: 4.2cqw; font-size: .95cqw; color: var(--muted); }
+  .folio { position: absolute; top: 4.2cqw; right: 4.2cqw; font-size: .95cqw; color: var(--hint); }
+  .foot { position: absolute; bottom: 3.4cqw; left: 4.2cqw; font-size: .85cqw; color: var(--hint); }
+  .disp { font-weight: 800; letter-spacing: -.05em; line-height: .9; }
+  .accent { color: var(--purp); }
+  .phone { position: absolute; width: 17cqw; aspect-ratio: 1170 / 2532; border-radius: 2.2cqw; padding: .45cqw; background: #E6E0D9; box-shadow: 0 0 0 1px rgba(14,16,15,.14), 0 3cqw 5cqw -2.5cqw rgba(14,16,15,.28), 0 0 6cqw -2cqw rgba(91,65,224,.22); }
+  .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 1.8cqw; display: block; }
+  .mark { font-family: KageMark, serif; line-height: 1; position: relative; isolation: isolate; z-index: 0; }
+  .mark::before { content: "影"; position: absolute; left: .09em; top: .09em; color: var(--purp); z-index: -1; }
+
+  /* closing cells */
+  .seams, .tokens { padding: 2.2cqw; display: flex; flex-direction: column; gap: 1.4cqw; }
+  .seams h3, .tokens h3 { font-family: "Geist Mono", monospace; font-size: 1.2cqw; letter-spacing: .14em; color: var(--muted); font-weight: 400; }
+  .strip { display: flex; align-items: center; gap: .8cqw; font-family: "Geist Mono", monospace; font-size: 1.15cqw; flex-wrap: wrap; }
+  .strip .f { background: var(--ink2); border: 1px solid var(--line); border-radius: .6cqw; padding: .6cqw 1cqw; }
+  .strip .s { color: var(--purp); font-size: 1cqw; }
+  .sw { display: flex; gap: 1cqw; }
+  .sw div { flex: 1; border-radius: .8cqw; height: 5cqw; display: flex; align-items: flex-end; padding: .7cqw; font-family: "Geist Mono", monospace; font-size: .95cqw; border: 1px solid var(--line); }
+  .tokens p { font-size: 1.35cqw; line-height: 1.45; color: var(--muted); }
+  .tokens p b { color: var(--cream); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Kage promo — storyboard <span>v2 · light</span></h1>
+    <p>Most "traders" on Kuru are bots — Kage copies what real traders actually do.</p>
+  </div>
+  <div class="tag">1920×1080 · ~26S · 6 BEATS · SILENT</div>
+</header>
+
+<div class="grid">
+
+  <!-- 01 -->
+  <div class="item">
+    <div class="cell" id="frame-01">
+      <div class="kicker mono">Kuru · MON/USDC · on-chain</div>
+      <div class="folio mono">01</div>
+      <div style="position:absolute;left:4.2cqw;top:50%;transform:translateY(-58%)">
+        <div class="disp" style="font-size:16cqw">61,894</div>
+        <div class="disp" style="font-size:4.6cqw;margin-top:1.6cqw;color:var(--muted);letter-spacing:-.03em">limit orders. <span class="accent">One hour.</span></div>
+      </div>
+      <div class="foot mono">Sampled hour · Kuru mainnet</div>
+    </div>
+    <div class="label"><span>01 · 61,894</span><span>hook · 0–4.0s</span></div>
+    <div class="note"><b>The number counts up from 0</b> left-anchored, digits ticking; the line beneath slides up once it lands. Hard cut out.</div>
+    <div class="chip">IN: CUT</div>
+  </div>
+
+  <!-- 02 -->
+  <div class="item">
+    <div class="cell" id="frame-02">
+      <div class="kicker mono">Who placed them</div>
+      <div class="folio mono">02</div>
+      <div class="disp" style="position:absolute;left:4.2cqw;top:15cqw;font-size:8.4cqw">From <span class="accent">5</span> wallets.</div>
+      <div style="position:absolute;left:4.2cqw;top:31cqw;display:flex;gap:3.2cqw;align-items:flex-start">
+        <div style="text-align:center"><div style="width:6.4cqw;height:6.4cqw;border-radius:50%;background:var(--berry-deep);opacity:.9"></div><div class="mono" style="font-size:1.35cqw;color:var(--berry);margin-top:1.1cqw">Bot</div></div>
+        <div style="text-align:center"><div style="width:6.4cqw;height:6.4cqw;border-radius:50%;background:var(--berry-deep);opacity:.9"></div><div class="mono" style="font-size:1.35cqw;color:var(--berry);margin-top:1.1cqw">Bot</div></div>
+        <div style="text-align:center"><div style="width:6.4cqw;height:6.4cqw;border-radius:50%;background:var(--berry-deep);opacity:.9"></div><div class="mono" style="font-size:1.35cqw;color:var(--berry);margin-top:1.1cqw">Bot</div></div>
+        <div style="text-align:center"><div style="width:6.4cqw;height:6.4cqw;border-radius:50%;background:var(--berry-deep);opacity:.9"></div><div class="mono" style="font-size:1.35cqw;color:var(--berry);margin-top:1.1cqw">Bot</div></div>
+        <div style="text-align:center"><div style="width:6.4cqw;height:6.4cqw;border-radius:50%;border:.3cqw solid var(--muted)"></div><div class="mono" style="font-size:1.35cqw;color:var(--muted);margin-top:1.1cqw">?</div></div>
+      </div>
+      <div style="position:absolute;right:4.2cqw;bottom:6cqw;text-align:right">
+        <div class="disp" style="font-size:3.4cqw;color:var(--muted);letter-spacing:-.03em">Everyone else</div>
+        <div class="disp" style="font-size:3.4cqw;letter-spacing:-.03em">placed <span class="accent">1.</span></div>
+      </div>
+      <div class="foot mono">61,894 orders · 5 wallets · 4 market makers</div>
+    </div>
+    <div class="label"><span>02 · Five wallets</span><span>problem · 4.0–8.5s</span></div>
+    <div class="note"><b>Five dots pop in left→right</b>, then four flip to berry with a BOT tag in sequence; the bottom-right line types on last. Crossfade in.</div>
+    <div class="chip">IN: CROSSFADE</div>
+  </div>
+
+  <!-- 03 -->
+  <div class="item">
+    <div class="cell" id="frame-03">
+      <div class="kicker mono">Meanwhile · ~90 real wallets</div>
+      <div class="folio mono">03</div>
+      <div style="position:absolute;left:4.2cqw;top:13cqw">
+        <div class="disp" style="font-size:5cqw;color:var(--hint);letter-spacing:-.04em;text-decoration:line-through;text-decoration-thickness:.35cqw">Real traders don't place orders.</div>
+        <div class="disp" style="font-size:9cqw;margin-top:1.4cqw">They <span class="accent">take</span> them.</div>
+      </div>
+      <div style="position:absolute;left:4.2cqw;bottom:6cqw;display:flex;align-items:center;gap:2.6cqw">
+        <div class="mark" style="font-size:7cqw">影</div>
+        <div class="disp" style="font-size:3.3cqw;letter-spacing:-.03em;line-height:1.05">So Kage copies what<br>they <span class="accent">actually do.</span></div>
+      </div>
+    </div>
+    <div class="label"><span>03 · The turn</span><span>value · 8.5–13.0s</span></div>
+    <div class="note"><b>First line strikes through</b>, the big swap "They take them." springs in; then the 影 mark drops with its purple offset shadow and the payoff line wipes on. Zoom-through in.</div>
+    <div class="chip">IN: ZOOM-THROUGH</div>
+  </div>
+
+  <!-- 04 -->
+  <div class="item">
+    <div class="cell" id="frame-04">
+      <div class="kicker mono">Smart money · live Kuru data</div>
+      <div class="folio mono">04</div>
+      <div style="position:absolute;left:4.2cqw;top:14cqw;width:40cqw">
+        <div class="disp" style="font-size:6cqw;white-space:nowrap">Real traders.<br><span class="accent">Ranked on&#8209;chain.</span></div>
+        <div class="mono" style="font-size:1.05cqw;color:var(--muted);margin-top:2.4cqw;line-height:1.8">Top PnL (beta) · bots filtered out<br>Nansen labels next</div>
+      </div>
+      <div class="phone" style="right:22cqw;top:7.5cqw"><img src="capture/assets/screen-smart.png" alt="Smart money board"></div>
+      <div class="phone" style="right:4.2cqw;top:13cqw;transform:rotate(3deg)"><img src="capture/assets/screen-trader.png" alt="Trader page"></div>
+    </div>
+    <div class="label"><span>04 · Ranked on-chain</span><span>proof · 13.0–18.0s</span></div>
+    <div class="note"><b>Headline lands left first</b>; the board phone rises from below, the trader phone follows tilted, staggered ~0.3s; slow drift up while held. Crossfade in.</div>
+    <div class="chip">IN: CROSSFADE</div>
+  </div>
+
+  <!-- 05 -->
+  <div class="item">
+    <div class="cell" id="frame-05">
+      <div class="kicker mono">One tap · signed by you</div>
+      <div class="folio mono">05</div>
+      <div class="phone" style="left:4.2cqw;top:8cqw;opacity:.55;transform:scale(.92);transform-origin:left top"><img src="capture/assets/screen-feed.png" alt="Feed"></div>
+      <div class="phone" style="left:20cqw;top:6cqw"><img src="capture/assets/screen-copy.png" alt="Copy sheet"></div>
+      <div style="position:absolute;right:4.2cqw;top:14cqw;width:46cqw;text-align:left">
+        <div class="disp" style="font-size:5.4cqw">Their fill <span class="accent">→</span><br>your limit order.</div>
+        <div class="disp" style="font-size:3.6cqw;color:var(--muted);letter-spacing:-.03em;margin-top:1.6cqw">At their price. Never chases.</div>
+        <div class="mono" style="margin-top:3.2cqw;display:inline-block;font-size:1.1cqw;color:#0B7D56;border:1px solid rgba(11,125,86,.35);background:rgba(11,125,86,.06);border-radius:999px;padding:.8cqw 1.4cqw">✓ Validated by Kuru before you sign</div>
+      </div>
+    </div>
+    <div class="label"><span>05 · One tap, your price</span><span>proof · 18.0–23.0s</span></div>
+    <div class="note"><b>Feed phone enters, then the copy sheet slides over it</b> like the real bottom sheet; headline builds line by line; the green check pill pops last. Push-slide left in.</div>
+    <div class="chip">IN: PUSH-SLIDE LEFT</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="item">
+    <div class="cell" id="frame-06">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6cqw">
+        <div class="mark" style="font-size:13cqw">影</div>
+        <div class="disp" style="font-size:7cqw;margin-top:1.2cqw">Kage</div>
+        <div class="disp" style="font-size:3.4cqw;color:var(--muted);letter-spacing:-.03em">Shadow the <span class="accent">smartest</span> money.</div>
+      </div>
+      <div class="foot mono" style="left:0;right:0;text-align:center">Building on Kuru · Monad mainnet · Android</div>
+    </div>
+    <div class="label"><span>06 · Kage</span><span>outro · 23.0–26.5s</span></div>
+    <div class="note"><b>影 mark settles with its shadow sliding out to offset</b>, name and line rise beneath; footer fades last and holds. Blur-crossfade in.</div>
+    <div class="chip">IN: BLUR-CROSSFADE</div>
+  </div>
+
+  <!-- seam map -->
+  <div class="item">
+    <div class="cell seams">
+      <h3>SEAM MAP</h3>
+      <div class="strip">
+        <span class="f">01</span><span class="s">crossfade</span><span class="f">02</span><span class="s">zoom-through</span><span class="f">03</span><span class="s">crossfade</span><span class="f">04</span><span class="s">push-slide ←</span><span class="f">05</span><span class="s">blur-crossfade</span><span class="f">06</span>
+      </div>
+      <p style="font-size:1.3cqw;color:var(--muted);line-height:1.5">Type-only act (01–03) on flat ink; zoom-through marks the turn into the product act (04–05, real screens); blur-crossfade into the brand lockup.</p>
+    </div>
+    <div class="label"><span>SEAMS</span><span>5 transitions</span></div>
+  </div>
+
+  <!-- tokens -->
+  <div class="item">
+    <div class="cell tokens">
+      <h3>TOKENS · frame.md (blue-professional → Kage light)</h3>
+      <div class="sw">
+        <div style="background:#FBFAF9">bg #FBFAF9</div>
+        <div style="background:#0E100F;color:#FBFAF9">text #0E100F</div>
+        <div style="background:#5B41E0;color:#FBFAF9">accent #5B41E0</div>
+        <div style="background:#A0055D;color:#FBFAF9">bot / sell</div>
+      </div>
+      <p><b>Display</b> Geist 800, tight −0.05em · <b>Chrome</b> Geist Mono caps 0.14em · <b>Mark</b> 影 Noto Serif JP + purple offset shadow.<br><b>Bans</b> second accent beyond the semantic bot tag, gradients on type, invented stats, Nansen or volume claims.</p>
+    </div>
+    <div class="label"><span>TOKENS</span><span>one accent</span></div>
+  </div>
+
+</div>
+</body>
+</html>

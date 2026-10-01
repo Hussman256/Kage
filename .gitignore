@@ -40,3 +40,6 @@ next-env.d.ts
 # Serwist
 public/sw*
 public/swe-worker*
+# Third-party agent skills (HyperFrames) — restore exactly with:
+#   npx skills experimental_install   (reads skills-lock.json)
+/.claude/skills/

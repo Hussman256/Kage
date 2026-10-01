@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #FBFAF9;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-exfx" id="root" data-composition-id="main" data-start="0" data-duration="26.5" data-width="1920" data-height="1080">
+      <div data-hf-id="hf-1nqk" id="el-01-stat" class="scene" data-composition-id="01-stat" data-composition-src="compositions/frames/01-stat.html" data-start="0" data-duration="4.5" data-track-index="0"></div>
+
+      <div data-hf-id="hf-u82a" id="el-02-bots" class="scene" data-composition-id="02-bots" data-composition-src="compositions/frames/02-bots.html" data-start="4" data-duration="4.9" data-track-index="1"></div>
+
+      <div data-hf-id="hf-e1ac" id="el-03-turn" class="scene" data-composition-id="03-turn" data-composition-src="compositions/frames/03-turn.html" data-start="8.5" data-duration="5" data-track-index="0"></div>
+
+      <div data-hf-id="hf-uuau" id="el-04-ranked" class="scene" data-composition-id="04-ranked" data-composition-src="compositions/frames/04-ranked.html" data-start="13" data-duration="5.5" data-track-index="1"></div>
+
+      <div data-hf-id="hf-w8pw" id="el-05-copy" class="scene" data-composition-id="05-copy" data-composition-src="compositions/frames/05-copy.html" data-start="18" data-duration="5.6" data-track-index="0"></div>
+
+      <div data-hf-id="hf-pbyd" id="el-06-outro" class="scene" data-composition-id="06-outro" data-composition-src="compositions/frames/06-outro.html" data-start="23" data-duration="3.5" data-track-index="1"></div>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      // ── frame transitions (injected by transitions.mjs) ──
+      (function () { var tl = window.__timelines["main"];
+        tl.to("#el-01-stat", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 4);
+        tl.fromTo("#el-02-bots", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 4);
+        tl.to("#el-02-bots", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 8.5);
+        tl.fromTo("#el-03-turn", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 8.5);
+        tl.to("#el-03-turn", { opacity: 0, duration: 0.5, ease: "power2.inOut" }, 13);
+        tl.fromTo("#el-04-ranked", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.inOut" }, 13);
+        tl.to("#el-04-ranked", { x: -1920, duration: 0.5, ease: "power3.inOut" }, 18);
+        tl.fromTo("#el-05-copy", { x: 1920, opacity: 1 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.inOut" }, 18);
+        tl.to("#el-05-copy", { filter: "blur(10px)", scale: 1.03, opacity: 0, duration: 0.6, ease: "power2.inOut" }, 23);
+        tl.fromTo("#el-06-outro", { filter: "blur(10px)", scale: 0.97, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.6, ease: "power2.inOut" }, 23);
+        tl.to({}, { duration: 26.5 }, 0); // full-span anchor — main.duration() == composition total (Studio master duration)
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+# Local HyperFrames CLI install (re-create with: npm i -D hyperframes)
+node_modules/
+
+# Generated per run — rebuild with the CLI
+*/snapshots/
+*/renders/
+*/.hyperframes/frame-packets/

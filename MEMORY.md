@@ -8,7 +8,7 @@
 > **Keep it current:** update the Status, Checkpoint log, and Next steps sections at every
 > checkpoint. Never put secrets here (API keys, private keys) — public IDs only.
 
-_Last updated: 2026-10-01_
+_Last updated: 2026-10-01 (evening)_
 
 ---
 
@@ -58,12 +58,17 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - **Book on real copies** (`copies.tsx` ledger + live `s_orders` state every 10 s): fill progress, cancel / cancel all (`batchCancelOrders`), stale flags (EXPIRED after 10 min, PRICE MOVED past guard) with one-tap cancel. **Kage never signs in the background** (passkey per tx), so expiry/drift guards flag rather than auto-cancel — Risk screen wording says so.
 - **Withdraw:** Settings → KURU shows margin balances (USDC, MON) and "Withdraw all to wallet" (`batchWithdrawMaxTokens`).
 - Sample data removed entirely except Rooms (P1, static, labelled).
+- **Bot filter tightened:** vanity addresses now match `0x000…` (3 zeros; ~1 in 4,096 for a random wallet) after `0x000e…` slipped onto the board.
+- **Trader page duplicate-key bug fixed** (two fills in one tx at the same price/size shared a React key).
+- **Marketing v1 shipped (build-in-public on X):** 26.5s 1920×1080 silent promo + 1600×900 graphic, light mode, angle "bots vs real traders". See §10.
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
 - Nothing mid-way. Order placement is code-complete; real signing waits only on passkey login (§5).
 
 ### ⏳ Not started / later
+- Polish: trader page's lavender header gradient ends in a hard edge mid-screen (`mobile/src/app/trader/[handle].tsx`) — fade it out fully.
+- Daily build-in-public videos from the **kage-daily** recipe (§10) as features land: passkey login live, first real mainnet copy, Nansen labels, APK download page.
 - **Envio indexer** (P0 in brief) — needed for 24H/7D leaderboards, history, real Book data at scale.
 - **Nansen integration** — needs an API key (ask hackathon sponsor desk / Discord). Swaps "Top PnL (beta)" for Nansen labels on the same screens.
 - **Rooms** (P1, sample, labelled).
@@ -150,6 +155,17 @@ cd /c/Users/pc/Kage && npm run dev
 
 ---
 
+## 10. Marketing videos (HyperFrames) — how to make the next one
+
+- **Tool:** HyperFrames (HeyGen, Apache-2.0) renders HTML compositions to MP4. Skills were installed with `npx skills add heygen-com/hyperframes -a claude-code -s '*' -y --copy` into `.claude/skills/` (gitignored; restore with `npx skills experimental_install` from `skills-lock.json`). Entry skill: `/hyperframes` → workflow `/product-launch-video`.
+- **CLI:** installed locally once in `videos/` (`npm i -D hyperframes`, because npx downloads kept failing with ECONNRESET) → run `../node_modules/.bin/hyperframes <cmd>` from a project folder (`lint`, `check`, `snapshot --at …`, `preview --background`, `render --skill=product-launch-video --quality high --output renders/video.mp4`).
+- **FFmpeg:** installed via winget but not on PATH in older shells → `export PATH="/c/Users/pc/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0.2-full_build/bin:$PATH"` before rendering.
+- **v1 project:** `videos/kage-promo/` — BRIEF.md, STORYBOARD.md (6 frames), frame.md (blue-professional preset remixed to Kage light), storyboard.html (sketch sheet), compositions/frames/*.html, graphic/kage-graphic.html → .png. Renders and snapshots are gitignored; re-render to get the MP4.
+- **Template:** recipe **kage-daily** frozen at `videos/kage-promo/.media/recipes/kage-daily` (v1). Say "make another kage-daily" / "like last time"; start new videos as sibling folders in `videos/`.
+- **Real app screens:** `node videos/capture-screens.mjs http://localhost:8090 light` drives the Expo **web** build (`cd mobile && CI=1 npx expo start --web --port 8090`) with headless system Chrome at 390×844 @3x; it warns if a dev error toast is in a shot. First request to a fresh web build compiles for 60s+.
+- **User preferences:** light mode; Yosuku (@yosuku0, 2nd in DeepBook track, Sui Overflow 2026) as the visual reference — big editorial type, one accent word, real phone screens; storyboard + sketches reviewed before building; silent (X autoplays muted). Commits/pushes at every checkpoint.
+- **Gotchas hit:** frame elements must each have their own `data-track-index` (assembler refuses shared lanes); fromTo on the same target twice → use `tl.to` for follow-ups; intentional glyph+shadow overlap needs `data-layout-allow-overlap` on both glyph elements; keep content above y=900.
+
 ## 9. Checkpoint log
 
 | Date | Checkpoint |
@@ -160,3 +176,4 @@ cd /c/Users/pc/Kage && npm run dev
 | 09-30 | Passkey login code (Privy) written, gated on setup. **D5** domain/app ID. Real Smart money leaderboard + trader pages. **D4** feed switched to copying trades; follows persisted. `MEMORY.md` created. |
 | 10-01 | All work committed on branch **`expo-app`**, authored as Hussman256, and **pushed to GitHub** (user signed in as Hussman256; this PC's other GitHub login, Anambraboi-1, has no access). Bot filter v2; order planning, dry-run, guards, execution flow, copies ledger. |
 | 10-01 | Order placement code-complete: Book on real copies, cancel / cancel all, stale flags, withdraw. Pushed. |
+| 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |

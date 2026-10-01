@@ -3,15 +3,15 @@
 //
 // 1. Market makers: anyone seen as a Trade maker (handled where trades are
 //    parsed, since it needs the maker address).
-// 2. Vanity addresses: 4+ leading zero hex digits. A random address starts
-//    with "0x0000" ~1 in 65,536 times; arbitrage bots grind for them because
-//    zero bytes make calldata cheaper.
+// 2. Vanity addresses: 3+ leading zero hex digits. A random address starts
+//    with "0x000" ~1 in 4,096 times; arbitrage bots grind for them because
+//    zero bytes make calldata cheaper (seen ranking on the board: 0x0000…, 0x000e…).
 // 3. Machine-speed takers: flagged by the leaderboard when a wallet makes
 //    HIGH_FREQ_FILLS_PER_HOUR or more fills in its window.
 
 export const HIGH_FREQ_FILLS_PER_HOUR = 100;
 
-export const isVanityAddress = (address: string) => /^0x0000/i.test(address);
+export const isVanityAddress = (address: string) => /^0x000/i.test(address);
 
 const highFrequency = new Set<string>();
 

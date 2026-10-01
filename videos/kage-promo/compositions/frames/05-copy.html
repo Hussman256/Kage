@@ -1,0 +1,65 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Geist"; font-weight: 800; src: url("assets/fonts/Geist_800ExtraBold.ttf"); }
+    @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("assets/fonts/GeistMono_400Regular.ttf"); }
+    #root { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; color: #0E100F; font-family: "Geist", sans-serif; }
+    #f05-bg { position: absolute; inset: 0; background: #FBFAF9; }
+    .f05-mono { font-family: "Geist Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+    #f05-kicker { position: absolute; left: 80px; top: 80px; font-size: 18px; color: #6B6579; }
+    #f05-folio { position: absolute; right: 80px; top: 80px; font-size: 18px; color: #6B6579; }
+    .f05-phone { position: absolute; width: 326px; height: 706px; border-radius: 42px; padding: 9px; background: #E6E0D9;
+      box-shadow: 0 0 0 1px rgba(14,16,15,.14), 0 50px 90px -40px rgba(14,16,15,.35), 0 0 120px -40px rgba(91,65,224,.25); }
+    .f05-phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 34px; display: block; }
+    #f05-feed { left: 80px; top: 150px; transform-origin: left top; }
+    #f05-copy { left: 384px; top: 115px; }
+    .f05-h { position: absolute; left: 960px; font-size: 104px; font-weight: 800; letter-spacing: -.05em; line-height: .95; white-space: nowrap; }
+    #f05-h1 { top: 270px; }
+    #f05-h1 b { color: #5B41E0; font-weight: 800; }
+    #f05-h2 { top: 388px; }
+    #f05-sub { position: absolute; left: 960px; top: 520px; font-size: 69px; font-weight: 800; letter-spacing: -.03em; color: #45404E; white-space: nowrap; }
+    #f05-pill { position: absolute; left: 960px; top: 660px; font-size: 21px; color: #0B7D56; border: 1.5px solid rgba(11,125,86,.35);
+      background: rgba(11,125,86,.06); border-radius: 999px; padding: 16px 28px; white-space: nowrap; }
+  </style>
+
+  <div data-hf-id="hf-oitz" id="root" data-composition-id="05-copy" data-width="1920" data-height="1080" data-duration="5.6">
+    <div data-hf-id="hf-oor8" id="f05-bg" class="clip" data-start="0" data-duration="5.6" data-track-index="0"></div>
+    <div data-hf-id="hf-0h3s" id="f05-kicker" class="clip f05-mono" data-start="0" data-duration="5.6" data-track-index="1">One tap · signed by you</div>
+    <div data-hf-id="hf-gyzm" id="f05-folio" class="clip f05-mono" data-start="0" data-duration="5.6" data-track-index="2">05</div>
+    <div data-hf-id="hf-quua" id="f05-feed" class="clip f05-phone" data-start="0" data-duration="5.6" data-track-index="3"><img data-hf-id="hf-pani" src="assets/screen-feed.png" alt=""></div>
+    <div data-hf-id="hf-nlw6" id="f05-copy" class="clip f05-phone" data-start="0" data-duration="5.6" data-track-index="4"><img data-hf-id="hf-3crp" src="assets/screen-copy.png" alt=""></div>
+    <div data-hf-id="hf-jeb8" id="f05-h1" class="clip f05-h" data-start="0" data-duration="5.6" data-track-index="5">Their fill <b data-hf-id="hf-qmvp">→</b></div>
+    <div data-hf-id="hf-dexx" id="f05-h2" class="clip f05-h" data-start="0" data-duration="5.6" data-track-index="6">your limit order.</div>
+    <div data-hf-id="hf-prab" id="f05-sub" class="clip" data-start="0" data-duration="5.6" data-track-index="7">At their price. Never chases.</div>
+    <div data-hf-id="hf-21gz" id="f05-pill" class="clip f05-mono" data-start="0" data-duration="5.6" data-track-index="8">✓ Validated by Kuru before you sign</div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.0–0.5): chrome; the feed phone is in place (arrives with the push-slide).
+      tl.fromTo(["#f05-kicker", "#f05-folio"], { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0);
+      tl.fromTo("#f05-feed", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 0);
+
+      // Scene 2 (0.5–1.5): copy sheet rises over the feed like the real bottom sheet; feed dims + scales back.
+      tl.fromTo("#f05-copy", { opacity: 0, y: 320 }, { opacity: 1, y: 0, duration: 0.9, ease: "expo.out" }, 0.5);
+      tl.to("#f05-feed", { opacity: 0.55, scale: 0.92, duration: 0.8, ease: "power3.out" }, 0.6);
+
+      // Scene 3 (1.5–2.6): headline builds.
+      tl.fromTo("#f05-h1", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 1.5);
+      tl.fromTo("#f05-h2", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 1.95);
+
+      // Scene 4 (2.6–3.4): muted line.
+      tl.fromTo("#f05-sub", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 2.6);
+
+      // Scene 5 (3.4–4.2): green check pill spring-pops — the payoff.
+      tl.fromTo("#f05-pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(2.6)" }, 3.4);
+
+      // Scene 6 (4.2–5.0): hold.
+      tl.set({}, {}, 5);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["05-copy"] = tl;
+    })();
+  </script>
+</template>

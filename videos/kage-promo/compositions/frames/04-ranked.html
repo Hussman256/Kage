@@ -1,0 +1,63 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face { font-family: "Geist"; font-weight: 800; src: url("assets/fonts/Geist_800ExtraBold.ttf"); }
+    @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("assets/fonts/GeistMono_400Regular.ttf"); }
+    #root { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; color: #0E100F; font-family: "Geist", sans-serif; }
+    #f04-bg { position: absolute; inset: 0; background: #FBFAF9; }
+    #f04-wash { position: absolute; right: -200px; top: 40px; width: 1200px; height: 1000px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(91,65,224,.10), rgba(91,65,224,0)); }
+    .f04-mono { font-family: "Geist Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+    #f04-kicker { position: absolute; left: 80px; top: 80px; font-size: 18px; color: #6B6579; }
+    #f04-folio { position: absolute; right: 80px; top: 80px; font-size: 18px; color: #6B6579; }
+    .f04-h { position: absolute; left: 80px; font-size: 115px; font-weight: 800; letter-spacing: -.05em; line-height: .95; white-space: nowrap; }
+    #f04-h1 { top: 290px; }
+    #f04-h2 { top: 418px; color: #5B41E0; }
+    #f04-sub { position: absolute; left: 80px; top: 580px; font-size: 20px; line-height: 1.8; color: #45404E; }
+    .f04-phone { position: absolute; width: 326px; height: 706px; border-radius: 42px; padding: 9px; background: #E6E0D9;
+      box-shadow: 0 0 0 1px rgba(14,16,15,.14), 0 50px 90px -40px rgba(14,16,15,.35), 0 0 120px -40px rgba(91,65,224,.25); }
+    .f04-phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 34px; display: block; }
+    #f04-p1 { right: 420px; top: 120px; }
+    #f04-p2 { right: 80px; top: 165px; }
+  </style>
+
+  <div data-hf-id="hf-63kd" id="root" data-composition-id="04-ranked" data-width="1920" data-height="1080" data-duration="5.5">
+    <div data-hf-id="hf-ltw8" id="f04-bg" class="clip" data-start="0" data-duration="5.5" data-track-index="0"></div>
+    <div data-hf-id="hf-wyh5" id="f04-wash" class="clip" data-start="0" data-duration="5.5" data-track-index="1"></div>
+    <div data-hf-id="hf-h8az" id="f04-kicker" class="clip f04-mono" data-start="0" data-duration="5.5" data-track-index="2">Smart money · live Kuru data</div>
+    <div data-hf-id="hf-d9nf" id="f04-folio" class="clip f04-mono" data-start="0" data-duration="5.5" data-track-index="3">04</div>
+    <div data-hf-id="hf-32yi" id="f04-h1" class="clip f04-h" data-start="0" data-duration="5.5" data-track-index="4">Real traders.</div>
+    <div data-hf-id="hf-nx4x" id="f04-h2" class="clip f04-h" data-start="0" data-duration="5.5" data-track-index="5">Ranked on‑chain.</div>
+    <div data-hf-id="hf-v2f6" id="f04-sub" class="clip f04-mono" data-start="0" data-duration="5.5" data-track-index="6">Top PnL (beta) · bots filtered out<br data-hf-id="hf-x5px">Nansen labels next</div>
+    <div data-hf-id="hf-kxvm" id="f04-p1" class="clip f04-phone" data-start="0" data-duration="5.5" data-track-index="7"><img data-hf-id="hf-964f" src="assets/screen-smart.png" alt=""></div>
+    <div data-hf-id="hf-a582" id="f04-p2" class="clip f04-phone" data-start="0" data-duration="5.5" data-track-index="8"><img data-hf-id="hf-o99q" src="assets/screen-trader.png" alt=""></div>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.0–0.5): chrome.
+      tl.fromTo(["#f04-kicker", "#f04-folio"], { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0);
+      tl.fromTo("#f04-wash", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.out" }, 0);
+
+      // Scene 2 (0.5–1.4): headline builds line by line.
+      tl.fromTo("#f04-h1", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.3);
+      tl.fromTo("#f04-h2", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.75);
+
+      // Scene 3 (1.4–2.4): board phone rises from below; sub-line fades in.
+      tl.fromTo("#f04-p1", { opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.95, ease: "expo.out" }, 1.4);
+      tl.fromTo("#f04-sub", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 1.8);
+
+      // Scene 4 (2.4–3.4): trader phone follows, tilted, staggered behind.
+      tl.fromTo("#f04-p2", { opacity: 0, y: 260, rotation: 7 }, { opacity: 1, y: 0, rotation: 3, duration: 0.95, ease: "expo.out" }, 2.4);
+
+      // Scene 5 (3.4–5.0): hold; phones drift up a hair together.
+      tl.fromTo(["#f04-p1", "#f04-p2"], { yPercent: 0 }, { yPercent: -1, duration: 1.6, ease: "sine.inOut" }, 3.4);
+
+      tl.set({}, {}, 5);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["04-ranked"] = tl;
+    })();
+  </script>
+</template>

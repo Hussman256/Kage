@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kage — X graphic</title>
+<style>
+  /* Same tokens as the promo video (frame.md, Kage light). 1600×900 for X. */
+  @font-face { font-family: "Geist"; font-weight: 800; src: url("../assets/fonts/Geist_800ExtraBold.ttf"); }
+  @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("../assets/fonts/GeistMono_400Regular.ttf"); }
+  @font-face { font-family: "KageMark"; src: url("../assets/fonts/KageMark-Black.ttf"); }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; }
+  body { background: #FBFAF9; color: #0E100F; font-family: "Geist", sans-serif; position: relative; }
+  .wash { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(91,65,224,.12), rgba(91,65,224,0)); }
+  .mono { font-family: "Geist Mono", monospace; letter-spacing: .14em; text-transform: uppercase; }
+  .accent { color: #5B41E0; }
+
+  .kicker { position: absolute; left: 72px; top: 64px; font-size: 16px; color: #6B6579; }
+  .brand { position: absolute; left: 72px; top: 118px; display: flex; align-items: center; gap: 22px; }
+  .mark { position: relative; width: 96px; height: 96px; }
+  .mark span { position: absolute; left: 0; top: 0; font-family: "KageMark", serif; font-size: 96px; line-height: 1; }
+  .mark .sh { color: #5B41E0; transform: translate(9px, 9px); }
+  .name { font-size: 64px; font-weight: 800; letter-spacing: -.05em; }
+
+  .stat { position: absolute; left: 72px; top: 268px; font-size: 150px; font-weight: 800; letter-spacing: -.05em; line-height: .9; font-variant-numeric: tabular-nums; }
+  .statline { position: absolute; left: 76px; top: 412px; font-size: 40px; font-weight: 800; letter-spacing: -.03em; color: #45404E; }
+  .bots { position: absolute; left: 76px; top: 486px; display: flex; gap: 18px; align-items: center; }
+  .dot { width: 34px; height: 34px; border-radius: 50%; background: #A0055D; }
+  .dot.q { background: transparent; border: 4px solid #6B6579; }
+  .bots .lbl { font-size: 15px; color: #A0055D; margin-left: 8px; }
+  .turn { position: absolute; left: 72px; top: 580px; font-size: 58px; font-weight: 800; letter-spacing: -.045em; line-height: 1.02; }
+  .foot { position: absolute; left: 72px; bottom: 60px; font-size: 15px; color: #6B6579; }
+
+  .phone { position: absolute; width: 300px; height: 650px; border-radius: 40px; padding: 8px; background: #E6E0D9;
+    box-shadow: 0 0 0 1px rgba(14,16,15,.14), 0 50px 90px -40px rgba(14,16,15,.35), 0 0 120px -40px rgba(91,65,224,.25); }
+  .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 32px; display: block; }
+  .p1 { right: 400px; top: 110px; }
+  .p2 { right: 72px; top: 150px; transform: rotate(3deg); }
+  .pill { position: absolute; right: 120px; bottom: 56px; font-size: 15px; color: #0B7D56; border: 1.5px solid rgba(11,125,86,.35);
+    background: rgba(11,125,86,.06); border-radius: 999px; padding: 12px 20px; }
+</style>
+</head>
+<body>
+  <div class="wash" style="left:-220px;top:160px;width:1000px;height:760px"></div>
+  <div class="wash" style="right:-160px;top:40px;width:1000px;height:900px"></div>
+
+  <div class="kicker mono">Building in public · Monad Metropolis</div>
+  <div class="brand">
+    <div class="mark"><span class="sh">影</span><span>影</span></div>
+    <div class="name">Kage</div>
+  </div>
+
+  <div class="stat">61,894</div>
+  <div class="statline">limit orders on Kuru. <span class="accent">One hour.</span></div>
+  <div class="bots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot q"></div><span class="lbl mono">5 wallets · 4 are bots</span></div>
+  <div class="turn">Kage copies what real<br>traders <span class="accent">actually do.</span></div>
+  <div class="foot mono">Kuru · Monad mainnet · Android</div>
+
+  <div class="phone p1"><img src="../assets/screen-smart.png" alt=""></div>
+  <div class="phone p2"><img src="../assets/screen-copy.png" alt=""></div>
+  <div class="pill mono">✓ Validated by Kuru before you sign</div>
+</body>
+</html>

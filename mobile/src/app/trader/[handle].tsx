@@ -127,8 +127,10 @@ export default function TraderDetail() {
             <View style={{ marginTop: 18 }}>
               <Mono style={{ fontSize: 10, letterSpacing: 1, color: t.ink5, marginBottom: 12 }}>RECENT FILLS</Mono>
               <View style={{ gap: 11 }}>
-                {trader.recent.map((f) => (
-                  <View key={`${f.txHash}:${f.price}:${f.size}`} style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                {trader.recent.map((f, i) => (
+                  // One tx can hold several fills at the same price and size, so the
+                  // position keeps keys unique within this fixed list.
+                  <View key={`${f.txHash}:${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                     <Mono style={{ fontSize: 10.5, color: t.ink6, width: 34 }}>
                       {head ? fmtAge(Number(head - f.block) * BLOCK_MS) : ""}
                     </Mono>
