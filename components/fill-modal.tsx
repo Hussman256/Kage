@@ -1,9 +1,13 @@
 "use client";
 
-import type { FeedOrder } from "@/lib/mock-data";
+import type { CopySize } from "@/lib/copy-sizing";
+import { fmtAmount, fmtPrice } from "@/lib/format";
+import type { CopySource } from "./copy-sheet";
 
-export function FillModal({ order, onClose }: { order: FeedOrder; onClose: () => void }) {
-  const isBuy = order.side === "BUY LIMIT";
+// Signing isn't wired yet (next build step), so this screen shows what *would*
+// be submitted and says so plainly — no invented latency, block, or tx hash.
+export function FillModal({ order, copy, onClose }: { order: CopySource; copy: CopySize; onClose: () => void }) {
+  const side = order.isBuy ? "BUY LIMIT" : "SELL LIMIT";
 
   return (
     <div className="fixed inset-0 z-40 flex flex-col bg-inv" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
@@ -19,23 +23,29 @@ export function FillModal({ order, onClose }: { order: FeedOrder; onClose: () =>
         >
           ✓
         </div>
-        <div className="mt-7 text-[31px] font-semibold tracking-tight">Shadow filled</div>
+        <div className="mt-7 text-[31px] font-semibold tracking-tight">Shadow ready</div>
         <div
-          className="tabular-nums mt-3.5 inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[13px]"
-          style={{ background: "var(--g12)", borderColor: "var(--g35)", color: "var(--grn)" }}
+          className="mt-3.5 inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[13px]"
+          style={{ background: "rgba(160,5,93,.12)", borderColor: "rgba(240,140,190,.4)", color: "var(--berryInk)" }}
         >
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--grn)" }} />
-          FILLED IN {Math.floor(300 + Math.random() * 250)} ms
+          <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--berryInk)" }} />
+          NOT SIGNED · PAPER COPY
         </div>
         <div className="mt-3 font-mono text-[10px] tracking-[.08em]" style={{ color: "var(--ink6)" }}>
-          SIMULATED · WILL READ MONAD EXECUTION EVENTS ONCE KURU IS WIRED IN
+          KURU ORDER SUBMISSION IS THE NEXT BUILD STEP
         </div>
 
         <div className="mt-8 flex w-full flex-col gap-3.5 rounded-2xl border p-5 text-left font-mono text-[12.5px]" style={{ background: "var(--card)", borderColor: "var(--a09)" }}>
           <div className="flex justify-between"><span style={{ color: "var(--ink5)" }}>PAIR</span><span>{order.pair}</span></div>
-          <div className="flex justify-between"><span style={{ color: "var(--ink5)" }}>SIDE</span><span style={{ color: isBuy ? "var(--grn)" : "var(--berryInk)" }}>{order.side}</span></div>
-          <div className="tabular-nums flex justify-between"><span style={{ color: "var(--ink5)" }}>FILLED</span><span>{order.size} @ {order.price}</span></div>
-          <div className="tabular-nums flex justify-between"><span style={{ color: "var(--ink5)" }}>SLIPPAGE VS SOURCE</span><span>0.00%</span></div>
+          <div className="flex justify-between"><span style={{ color: "var(--ink5)" }}>SIDE</span><span style={{ color: order.isBuy ? "var(--grn)" : "var(--berryInk)" }}>{side}</span></div>
+          <div className="tabular-nums flex justify-between">
+            <span style={{ color: "var(--ink5)" }}>YOUR ORDER</span>
+            <span>{fmtAmount(copy.size)} {order.base} @ {fmtPrice(order.price)}</span>
+          </div>
+          <div className="tabular-nums flex justify-between"><span style={{ color: "var(--ink5)" }}>VALUE</span><span>≈ {fmtAmount(copy.quoteValue)} USDC</span></div>
+          <div className="flex justify-between border-t pt-3.5" style={{ borderColor: "var(--a09)" }}>
+            <span style={{ color: "var(--ink5)" }}>SHADOWING</span><span>{order.who}</span>
+          </div>
         </div>
       </div>
 

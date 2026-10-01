@@ -1,7 +1,7 @@
 "use client";
 
 import { PrivyProvider as BasePrivyProvider } from "@privy-io/react-auth";
-import { monadTestnet } from "viem/chains";
+import { monad } from "@/lib/monad";
 
 export default function PrivyProvider({
   children,
@@ -23,8 +23,8 @@ export default function PrivyProvider({
             secondary: null,
           },
         },
-        defaultChain: monadTestnet,
-        supportedChains: [monadTestnet],
+        defaultChain: monad,
+        supportedChains: [monad],
       }}
     >
       {children}

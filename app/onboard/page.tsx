@@ -97,7 +97,7 @@ export default function OnboardPage() {
         </button>
 
         <div className="mt-1 text-center font-mono text-[10.5px] tracking-[.1em]" style={{ color: "var(--ink6)" }}>
-          NO SEED PHRASE · NO CUSTODY · MONAD TESTNET
+          NO SEED PHRASE · NO CUSTODY · MONAD MAINNET
         </div>
       </div>
     </main>
