@@ -8,7 +8,7 @@
 > **Keep it current:** update the Status, Checkpoint log, and Next steps sections at every
 > checkpoint. Never put secrets here (API keys, private keys) — public IDs only.
 
-_Last updated: 2026-10-01 (evening)_
+_Last updated: 2026-10-02_
 
 ---
 
@@ -64,12 +64,13 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
-- Nothing mid-way. Order placement is code-complete; real signing waits only on passkey login (§5).
+- **Envio indexer: code-complete, not deployed** (`indexer/`, see its README). Indexes Kuru `Trade` only → `TakerTrade`, `Trader` (maker/taker counts), `TraderHour`/`TraderDay` buckets, `MarketHour`. Aggregation in `indexer/src/aggregate.ts` was replayed against ~500 live trades: bucket PnL matches the per-fill method to 1e-12. The handler is only type-checked against a stub of envio's API: `envio` has no Windows binary and there's no Docker/WSL, so codegen and the first real run happen on Envio Cloud.
+- **App side done:** `mobile/src/lib/kuru/indexer.ts` (GraphQL client, paging, bot candidates) + leaderboard rewritten for 1H/24H/7D (indexer for all windows when `EXPO_PUBLIC_INDEXER_URL` is set, otherwise 1H over RPC). Smart money window chips work, show "SINCE hh:mm UTC" for bucketed windows; trader page follows the window it was opened from. Untested against a live endpoint, so check the Hasura query shapes on first deploy.
+- **Hosting decision pending (user):** Kuru does ~25k–75k Trade events/day; Envio's free plan soft-limits at 100k events (then 7d grace + 3d read-only + deletion; 30-day max). Options: Envio hackathon credits (ask sponsor), Production Small $70/mo (~1M events), or self-host.
 
 ### ⏳ Not started / later
 - Polish: trader page's lavender header gradient ends in a hard edge mid-screen (`mobile/src/app/trader/[handle].tsx`) — fade it out fully.
 - Daily build-in-public videos from the **kage-daily** recipe (§10) as features land: passkey login live, first real mainnet copy, Nansen labels, APK download page.
-- **Envio indexer** (P0 in brief) — needed for 24H/7D leaderboards, history, real Book data at scale.
 - **Nansen integration** — needs an API key (ask hackathon sponsor desk / Discord). Swaps "Top PnL (beta)" for Nansen labels on the same screens.
 - **Rooms** (P1, sample, labelled).
 - **App icon + splash image** (still Expo defaults).
@@ -81,7 +82,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 ## 4. Next steps (in order)
 
 1. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
-2. Envio indexer (24H/7D leaderboards); Nansen (when key arrives).
+2. Deploy the Envio indexer (needs the user's Envio login + hosting choice, §5), set `EXPO_PUBLIC_INDEXER_URL`, verify queries on device. Then consider moving the live feed's backfill to the indexer. Nansen when the key arrives.
 3. App icon/splash, preview APK, website download page, demo, submission.
 
 ---
@@ -93,6 +94,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - [ ] **Privy dashboard:** enable **Passkey** login; add an **app client** (mobile/React Native) with allowed app identifier **`xyz.usekage.app`**; send the **App ID** and **Client ID** (public IDs). After the first build: add the Android **SHA-256** key hash under allowed Android key hashes.
 - [ ] **Vercel account** (free) for the website.
 - [ ] **Nansen API key** — ask the hackathon sponsor desk / Discord.
+- [ ] **Envio:** log in at envio.dev with GitHub (Hussman256), install the Envio Deployments app on `Hussman256/Kage`, add indexer (dir `indexer`, config `config.yaml`, dedicated branch e.g. `envio`). **Ask Envio's sponsor desk for a hackathon plan/credits**: the free plan's 100k-event cap is ~1–4 days of Kuru trades.
 
 ---
 
@@ -123,7 +125,7 @@ cd /c/Users/pc/Kage && npm run dev
 - Mainnet MON/USDC market: `0x065C9d28E428A0db40191a54d33d5b7c71a9C394`. Margin account `0x2A68ba1833cDf93fa9Da1EEbd7F46242aD8E90c5`. Router `0xd651346d7c789536ebf06dc72aE3C8502cd695CC`. Mainnet RPC `https://rpc.monad.xyz`.
 - Events have **no indexed params**. `Trade(uint40,address,bool,uint256,uint96,address,address,uint96)` — **price is 1e18-scaled uint256**; `OrderCreated.price` uses the market's `pricePrecision` (1e8 on MON/USDC); sizes use `sizePrecision` (1e10). Cancels emit `OrdersCanceled(uint40[],address)`.
 - `Trade.isBuy` is the **taker's** side (Kuru SDK: isBuy=true consumes asks).
-- Min order 200 MON. Public RPCs cap `eth_getLogs` at **100 blocks**. Monad blocks ≈ 400 ms.
+- Min order 200 MON. Public RPCs cap `eth_getLogs` at **100 blocks**. Monad blocks ≈ **300 ms** on mainnet (measured 2026-10-02; `BLOCK_MS` in `mobile/src/lib/monad.ts`). The old 400 ms assumption made the RPC "1H" window ~45 min.
 - An empty book side can return **0 or uint256 max** from `bestBidAsk()`.
 - Bot detection: anyone who appears as a `Trade` maker is a market-making bot; also skip trades whose taker is one of those contracts (operators rebalancing).
 
@@ -176,4 +178,5 @@ cd /c/Users/pc/Kage && npm run dev
 | 09-30 | Passkey login code (Privy) written, gated on setup. **D5** domain/app ID. Real Smart money leaderboard + trader pages. **D4** feed switched to copying trades; follows persisted. `MEMORY.md` created. |
 | 10-01 | All work committed on branch **`expo-app`**, authored as Hussman256, and **pushed to GitHub** (user signed in as Hussman256; this PC's other GitHub login, Anambraboi-1, has no access). Bot filter v2; order planning, dry-run, guards, execution flow, copies ledger. |
 | 10-01 | Order placement code-complete: Book on real copies, cancel / cancel all, stale flags, withdraw. Pushed. |
+| 10-02 | Envio indexer written (`indexer/`, not deployed: no Windows binary, hosting decision pending). App: 1H/24H/7D leaderboards via indexer, RPC fallback; block time fixed to 300 ms. Pushed. |
 | 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |

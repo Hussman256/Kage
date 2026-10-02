@@ -1,5 +1,5 @@
 import type { Address, Hash } from "viem";
-import { MAX_LOG_RANGE, publicClient } from "@/lib/monad";
+import { BLOCK_MS, MAX_LOG_RANGE, publicClient } from "@/lib/monad";
 import { isLikelyBot, isVanityAddress } from "./bots";
 import { MARKETS, marketByAddress } from "./markets";
 import { getMarketParams, orderBookAbi, sizeAmount, wadPrice, type MarketParams } from "./orderbook";
@@ -36,9 +36,8 @@ export type TradesSnapshot = {
 };
 
 const POLL_MS = 1200;
-const BACKFILL_BLOCKS = BigInt(2250); // ~15 minutes, so the feed isn't empty on open
+const BACKFILL_BLOCKS = BigInt(3000); // ~15 minutes, so the feed isn't empty on open
 const MAX_TRADES = 300;
-const BLOCK_MS = 400;
 
 const trades = new Map<string, LiveTrade & { notional: number }>();
 const bots = new Set<string>(); // anyone seen providing resting liquidity

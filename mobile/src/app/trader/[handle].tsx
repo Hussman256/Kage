@@ -8,11 +8,11 @@ import { Avatar, DataBadge, Mono, SideChip, T } from "@/components/ui";
 import { GhostButton, PrimaryButton } from "@/components/visuals";
 import { useFollows } from "@/lib/follows";
 import { fmtAge, fmtAmount, fmtCompactUsd, fmtPrice, fmtSignedUsd, shortAddr } from "@/lib/format";
-import { getTrader, type Leaderboard, type TraderStats } from "@/lib/kuru/leaderboard";
+import { getTrader, WINDOWS, type Leaderboard, type TraderStats, type Window } from "@/lib/kuru/leaderboard";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
 
-const BLOCK_MS = 400;
+const WINDOW_TEXT: Record<Window, string> = { "1H": "LAST HOUR", "24H": "LAST 24H", "7D": "LAST 7D" };
 
 // Map a PnL series into the design's 300×74 equity-curve box.
 function curvePoints(values: number[]) {
@@ -26,27 +26,29 @@ function curvePoints(values: number[]) {
 }
 
 // Design screen 03 — the evidence trail behind a ranking. Real fills from the
-// last hour; Nansen label history arrives with the Nansen integration.
+// leaderboard window it was opened from; Nansen label history arrives with the
+// Nansen integration.
 export default function TraderDetail() {
   const { t } = useTheme();
   const insets = useSafeAreaInsets();
-  const { handle } = useLocalSearchParams<{ handle: string }>();
+  const params = useLocalSearchParams<{ handle: string; window?: string }>();
+  const handle = params.handle;
+  const window: Window = WINDOWS.find((w) => w === params.window) ?? "1H";
   const [state, setState] = useState<{ board: Leaderboard; trader: TraderStats | null } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { isFollowing, toggle } = useFollows();
   const following = isFollowing(handle);
 
   useEffect(() => {
-    getTrader(handle).then(setState, (e) => setError(e instanceof Error ? e.message : String(e)));
-  }, [handle]);
+    getTrader(handle, window).then(setState, (e) => setError(e instanceof Error ? e.message : String(e)));
+  }, [handle, window]);
 
   const back = () => (router.canGoBack() ? router.back() : router.replace("/smart"));
   const trader = state?.trader;
-  const head = state?.board.headBlock;
 
   const stats = trader
     ? [
-        { label: "1H PNL", value: fmtSignedUsd(trader.pnlQuote), color: trader.pnlQuote >= 0 ? t.grn : t.berryInk },
+        { label: `${window} PNL`, value: fmtSignedUsd(trader.pnlQuote), color: trader.pnlQuote >= 0 ? t.grn : t.berryInk },
         { label: "FILLS", value: String(trader.fills), color: t.ink },
         { label: "VOLUME", value: fmtCompactUsd(trader.volumeQuote), color: t.ink },
       ]
@@ -94,13 +96,13 @@ export default function TraderDetail() {
         )}
 
         <View style={{ marginTop: 16, marginHorizontal: -20 }}>
-          <DataBadge label="LAST HOUR OF KURU FILLS · NANSEN LABELS NOT WIRED YET" />
+          <DataBadge label={`${WINDOW_TEXT[window]} OF KURU FILLS · NANSEN LABELS NOT WIRED YET`} />
         </View>
 
         {error && <Mono style={{ fontSize: 11, lineHeight: 17, color: t.berryInk }}>{`Couldn't load this trader: ${error.slice(0, 120)}`}</Mono>}
         {!state && !error && <Mono style={{ fontSize: 11.5, color: t.ink5 }}>Loading fills…</Mono>}
         {state && !trader && (
-          <T style={{ fontSize: 14, lineHeight: 21, color: t.ink3 }}>This wallet has no qualifying Kuru fills in the last hour.</T>
+          <T style={{ fontSize: 14, lineHeight: 21, color: t.ink3 }}>{`This wallet has no qualifying Kuru fills in the ${WINDOW_TEXT[window].toLowerCase()}.`}</T>
         )}
 
         {trader && (
@@ -116,7 +118,7 @@ export default function TraderDetail() {
 
             <View style={{ marginTop: 14, borderRadius: 18, backgroundColor: t.panel, borderWidth: 1, borderColor: t.a08, padding: 16 }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Mono style={{ fontSize: 10, letterSpacing: 1, color: t.ink5 }}>ESTIMATED PNL · LAST HOUR</Mono>
+                <Mono style={{ fontSize: 10, letterSpacing: 1, color: t.ink5 }}>{`ESTIMATED PNL · ${WINDOW_TEXT[window]}`}</Mono>
                 <Mono style={{ fontSize: 10, color: trader.pnlQuote >= 0 ? t.grn : t.berryInk }}>{fmtSignedUsd(trader.pnlQuote)}</Mono>
               </View>
               <Svg width="100%" height={74} viewBox="0 0 300 74" preserveAspectRatio="none" style={{ marginTop: 12 }}>
@@ -132,7 +134,7 @@ export default function TraderDetail() {
                   // position keeps keys unique within this fixed list.
                   <View key={`${f.txHash}:${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                     <Mono style={{ fontSize: 10.5, color: t.ink6, width: 34 }}>
-                      {head ? fmtAge(Number(head - f.block) * BLOCK_MS) : ""}
+                      {fmtAge(state!.board.fetchedAt - f.at)}
                     </Mono>
                     <SideChip isBuy={f.isBuy} text={f.isBuy ? "BUY" : "SELL"} />
                     <Mono style={{ flex: 1, fontSize: 12, color: t.ink2 }} numberOfLines={1}>

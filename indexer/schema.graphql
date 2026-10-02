@@ -1,0 +1,76 @@
+# Kage indexes Kuru *taker* activity. On Kuru, resting liquidity comes almost
+# entirely from market-making bots; real traders take it. Bot filtering happens
+# in the app (it needs thresholds we may tune), so this records everyone and
+# keeps the maker-side counts the app uses to spot market makers.
+#
+# Units (all BigInt, exact):
+#   size*      base amount in the market's sizePrecision (1e10 on MON/USDC)
+#   *QuoteWad  sum of price × size, where price is 1e18-scaled. Quote amount =
+#              QuoteWad / 1e18 / sizePrecision.
+# Timestamps are unix seconds; periodStart is the UTC hour/day start.
+
+# One trader's fills in one transaction on one side. A market order that sweeps
+# several maker orders is one trade at the volume-weighted average price.
+type TakerTrade {
+  id: ID! # market_txHash_trader_b|s
+  market: String! @index
+  trader: String! @index # tx origin: the wallet that decided to trade
+  taker: String! # address that called the book (often a router or bot contract)
+  isBuy: Boolean!
+  size: BigInt!
+  quoteWad: BigInt!
+  fills: Int!
+  blockNumber: Int!
+  timestamp: Int! @index
+  txHash: String!
+}
+
+# Every address seen on Kuru, as a tx origin (taker) or as a maker.
+type Trader {
+  id: ID! # address
+  takerFills: Int!
+  takerTrades: Int!
+  takerQuoteWad: BigInt!
+  makerFills: Int! @index # market makers have thousands; the app flags them as bots
+  viaMakerFills: Int! @index # taker fills sent through a market maker's contract (operator rebalancing)
+  firstTimestamp: Int!
+  lastTakerTimestamp: Int! @index
+}
+
+# Per-trader buckets for windowed leaderboards (24H from hours, 7D from days).
+type TraderHour {
+  id: ID! # market_trader_periodStart
+  market: String! @index
+  trader: String! @index
+  periodStart: Int! @index
+  fills: Int!
+  trades: Int!
+  sizeBought: BigInt!
+  sizeSold: BigInt!
+  quoteBoughtWad: BigInt! # spent
+  quoteSoldWad: BigInt! # received
+}
+
+type TraderDay {
+  id: ID! # market_trader_periodStart
+  market: String! @index
+  trader: String! @index
+  periodStart: Int! @index
+  fills: Int!
+  trades: Int!
+  sizeBought: BigInt!
+  sizeSold: BigInt!
+  quoteBoughtWad: BigInt!
+  quoteSoldWad: BigInt!
+}
+
+# Market-wide hourly volume and last price, used to mark PnL curves per hour.
+type MarketHour {
+  id: ID! # market_periodStart
+  market: String! @index
+  periodStart: Int! @index
+  fills: Int!
+  size: BigInt!
+  quoteWad: BigInt!
+  lastPriceWad: BigInt!
+}

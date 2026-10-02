@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: kage-kuru
+description: Kuru (Monad mainnet) taker trades for Kage's leaderboard, feed and trader pages
+# Every address (params, srcAddress, entity ids) is lowercase, so ids are
+# deterministic and the app can query with address.toLowerCase().
+address_format: lowercase
+contracts:
+  - name: KuruOrderBook
+    handler: src/handlers/OrderBook.ts
+    events:
+      # Verified against live mainnet logs: no indexed params, price is uint256
+      # 1e18-scaled, sizes use the market's sizePrecision. isBuy is the taker's side.
+      - event: "Trade(uint40 orderId, address makerAddress, bool isBuy, uint256 price, uint96 updatedSize, address takerAddress, address txOrigin, uint96 filledSize)"
+chains:
+  - id: 143 # Monad mainnet
+    # ~8 days before 2026-10-02 (Monad ≈ 0.3 s blocks, ~286k blocks/day), so the
+    # 7D leaderboard is full from the first sync.
+    start_block: 107600000
+    contracts:
+      - name: KuruOrderBook
+        address:
+          - "0x065c9d28e428a0db40191a54d33d5b7c71a9c394" # MON/USDC
