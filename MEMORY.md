@@ -8,7 +8,7 @@
 > **Keep it current:** update the Status, Checkpoint log, and Next steps sections at every
 > checkpoint. Never put secrets here (API keys, private keys) — public IDs only.
 
-_Last updated: 2026-10-02_
+_Last updated: 2026-10-03_
 
 ---
 
@@ -61,20 +61,21 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - **Bot filter tightened:** vanity addresses now match `0x000…` (3 zeros; ~1 in 4,096 for a random wallet) after `0x000e…` slipped onto the board.
 - **Trader page duplicate-key bug fixed** (two fills in one tx at the same price/size shared a React key).
 - **Marketing v1 shipped (build-in-public on X):** 26.5s 1920×1080 silent promo + 1600×900 graphic, light mode, angle "bots vs real traders". See §10.
+- **App icon + splash** (10-03): 影 mark with purple offset shadow on #0A0512, adaptive-icon layers, light/dark splash. Regenerate with `node videos/make-icons.mjs`. Expo template images and the iOS `expo.icon` bundle removed.
+- **usekage.xyz website** (10-03): `/` is now the landing + APK download page (button live once `NEXT_PUBLIC_APK_URL` is set; until then "Android build coming soon"). `public/.well-known/assetlinks.json` is in place (format checked against Android's Credential Manager docs) with a `REPLACE_WITH_EAS_SIGNING_SHA256` placeholder. The PWA install prompt was removed from the layout; old web screens remain at their routes.
+- Trader page header gradient now fades out fully (vertical axis).
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
-- **Envio indexer: code-complete, not deployed** (`indexer/`, see its README). Indexes Kuru `Trade` only → `TakerTrade`, `Trader` (maker/taker counts), `TraderHour`/`TraderDay` buckets, `MarketHour`. Aggregation in `indexer/src/aggregate.ts` was replayed against ~500 live trades: bucket PnL matches the per-fill method to 1e-12. The handler is only type-checked against a stub of envio's API: `envio` has no Windows binary and there's no Docker/WSL, so codegen and the first real run happen on Envio Cloud.
+- **Envio indexer: code-complete, not deployed.** 10-03: `start_block` set to **109880000** (2026-10-02 11:17 UTC, ~24h, ~50k events) so it can go on the **free plan now** while waiting for hackathon credits; when credits land, set it back to **107600000** for a full 7D. The leaderboard clamps its SINCE label to the first indexed hour, so a short backfill isn't presented as 7 days. (`indexer/`, see its README). Indexes Kuru `Trade` only → `TakerTrade`, `Trader` (maker/taker counts), `TraderHour`/`TraderDay` buckets, `MarketHour`. Aggregation in `indexer/src/aggregate.ts` was replayed against ~500 live trades: bucket PnL matches the per-fill method to 1e-12. The handler is only type-checked against a stub of envio's API: `envio` has no Windows binary and there's no Docker/WSL, so codegen and the first real run happen on Envio Cloud.
 - **App side done:** `mobile/src/lib/kuru/indexer.ts` (GraphQL client, paging, bot candidates) + leaderboard rewritten for 1H/24H/7D (indexer for all windows when `EXPO_PUBLIC_INDEXER_URL` is set, otherwise 1H over RPC). Smart money window chips work, show "SINCE hh:mm UTC" for bucketed windows; trader page follows the window it was opened from. Untested against a live endpoint, so check the Hasura query shapes on first deploy.
 - **Hosting decision pending (user):** Kuru does ~25k–75k Trade events/day; Envio's free plan soft-limits at 100k events (then 7d grace + 3d read-only + deletion; 30-day max). Options: Envio hackathon credits (ask sponsor), Production Small $70/mo (~1M events), or self-host.
 
 ### ⏳ Not started / later
-- Polish: trader page's lavender header gradient ends in a hard edge mid-screen (`mobile/src/app/trader/[handle].tsx`) — fade it out fully.
 - Daily build-in-public videos from the **kage-daily** recipe (§10) as features land: passkey login live, first real mainnet copy, Nansen labels, APK download page.
 - **Nansen integration** — needs an API key (ask hackathon sponsor desk / Discord). Swaps "Top PnL (beta)" for Nansen labels on the same screens.
 - **Rooms** (P1, sample, labelled).
-- **App icon + splash image** (still Expo defaults).
-- **Deploy the web app to usekage.xyz** with `assetlinks.json` + APK download page.
+- **Deploy the web app to usekage.xyz** (page + assetlinks built; needs domain, Vercel, and the SHA-256 filled in).
 - **Preview APK build** for distribution; demo video; submission write-up (must credit Kuru, Nansen, Envio, Privy; check AI-assisted-coding disclosure rule).
 
 ---
@@ -82,8 +83,8 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 ## 4. Next steps (in order)
 
 1. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
-2. Deploy the Envio indexer (needs the user's Envio login + hosting choice, §5), set `EXPO_PUBLIC_INDEXER_URL`, verify queries on device. Then consider moving the live feed's backfill to the indexer. Nansen when the key arrives.
-3. App icon/splash, preview APK, website download page, demo, submission.
+2. Deploy the Envio indexer on the free plan with the 24h backfill (needs the user's Envio login, §5); swap to the 8-day start block when credits arrive, set `EXPO_PUBLIC_INDEXER_URL`, verify queries on device. Then consider moving the live feed's backfill to the indexer. Nansen when the key arrives.
+3. Preview APK (then set `NEXT_PUBLIC_APK_URL`), demo, submission write-up.
 
 ---
 
@@ -179,4 +180,5 @@ cd /c/Users/pc/Kage && npm run dev
 | 10-01 | All work committed on branch **`expo-app`**, authored as Hussman256, and **pushed to GitHub** (user signed in as Hussman256; this PC's other GitHub login, Anambraboi-1, has no access). Bot filter v2; order planning, dry-run, guards, execution flow, copies ledger. |
 | 10-01 | Order placement code-complete: Book on real copies, cancel / cancel all, stale flags, withdraw. Pushed. |
 | 10-02 | Envio indexer written (`indexer/`, not deployed: no Windows binary, hosting decision pending). App: 1H/24H/7D leaderboards via indexer, RPC fallback; block time fixed to 300 ms. Pushed. |
+| 10-03 | Envio credits still pending → indexer set to a 24h backfill for the free plan; leaderboard labels true data start. App icon + light/dark splash; usekage.xyz landing/download page + assetlinks.json; trader gradient fix. Pushed. |
 | 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |

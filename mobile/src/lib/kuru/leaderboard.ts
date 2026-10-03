@@ -153,9 +153,13 @@ async function buildFromIndexer(market: KuruMarket, window: Window, p: MarketPar
     ]);
     // Mark each bucket at the market's last price at the end of that period.
     const marks = new Map<number, number>();
-    for (const h of hours.sort((a, b) => a.periodStart - b.periodStart)) {
+    hours.sort((a, b) => a.periodStart - b.periodStart);
+    for (const h of hours) {
       marks.set(Math.floor(h.periodStart / len) * len, wadPrice(BigInt(h.lastPriceWad)));
     }
+    // If the indexer started inside the window (e.g. a short backfill), label
+    // the board with where its data actually begins, not the nominal 7D/24H.
+    if (hours.length > 0) since = Math.max(since, hours[0].periodStart);
     for (const b of buckets) {
       fillsSeen += b.fills;
       const hf = fillsPerTrader.get(b.trader) ?? { fills: 0, hours: 0 };

@@ -90,7 +90,7 @@ export default function SmartMoney() {
 
       {data && (
         <Mono style={{ marginHorizontal: 22, marginBottom: 14, fontSize: 10.5, lineHeight: 16, color: t.ink6 }}>
-          {`${data.fillsSeen.toLocaleString("en-US")} FILLS ${WINDOW_TEXT[win].since} · ${data.botsExcluded} BOTS EXCLUDED · MARKED AT ${data.mid.toFixed(5)}`}
+          {`${data.fillsSeen.toLocaleString("en-US")} FILLS${data.window === "1H" ? ` ${WINDOW_TEXT[win].since}` : ""} · ${data.botsExcluded} BOTS EXCLUDED · MARKED AT ${data.mid.toFixed(5)}`}
           {data.window === "1H" ? "" : `
 ${sinceLabel(data.since)} · ENVIO INDEXER`}
         </Mono>

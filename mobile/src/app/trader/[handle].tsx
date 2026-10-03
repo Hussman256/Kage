@@ -57,10 +57,13 @@ export default function TraderDetail() {
   return (
     <View style={{ flex: 1, backgroundColor: t.inv }}>
       <LinearGradient
-        colors={["rgba(131,110,249,.26)", t.invT]}
-        start={{ x: 0.4, y: 0 }}
-        end={{ x: 0.6, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 300 + insets.top }}
+        // Vertical so the whole bottom edge reaches transparent (a diagonal
+        // axis left one corner tinted, which showed as a hard edge).
+        colors={["rgba(131,110,249,.26)", "rgba(131,110,249,.10)", t.invT]}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 340 + insets.top }}
       />
 
       <ScrollView contentContainerStyle={{ paddingTop: insets.top + 20, paddingHorizontal: 22, paddingBottom: 130 }}>

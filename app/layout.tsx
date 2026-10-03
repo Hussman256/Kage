@@ -4,7 +4,6 @@ import { Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 import ClientPrivyProvider from "./components/client-privy-provider";
 import { ThemeProvider } from "./components/theme-provider";
-import { InstallPWA } from "./components/InstallPWA";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -97,7 +96,6 @@ export default function RootLayout({
         <ThemeProvider>
           <ClientPrivyProvider>
             {children}
-            <InstallPWA />
           </ClientPrivyProvider>
         </ThemeProvider>
       </body>

@@ -13,9 +13,11 @@ contracts:
       - event: "Trade(uint40 orderId, address makerAddress, bool isBuy, uint256 price, uint96 updatedSize, address takerAddress, address txOrigin, uint96 filledSize)"
 chains:
   - id: 143 # Monad mainnet
-    # ~8 days before 2026-10-02 (Monad ≈ 0.3 s blocks, ~286k blocks/day), so the
-    # 7D leaderboard is full from the first sync.
-    start_block: 107600000
+    # Free-plan deployment: 2026-10-02 11:17 UTC, ~24h of history (~50k events),
+    # so the first sync stays under the plan's 100k-event limit. The 7D window
+    # only covers what's indexed since then. Once Envio's hackathon credits land,
+    # switch back to 107600000 (~8 days before 2026-10-02) for a full 7D board.
+    start_block: 109880000
     contracts:
       - name: KuruOrderBook
         address:

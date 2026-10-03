@@ -8,7 +8,6 @@
     "scheme": "kage",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
       "bundleIdentifier": "xyz.usekage.app"
     },
     "android": {
@@ -30,9 +29,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0A0512",
+          "backgroundColor": "#FBFAF9",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 120,
+          "dark": {
+            "backgroundColor": "#0A0512",
+            "image": "./assets/images/splash-icon-dark.png"
+          }
         }
       ],
       "expo-font"
