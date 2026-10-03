@@ -99,7 +99,20 @@ export const getTakerTrades = (market: string, sinceSec: number) =>
 export const getBuckets = (kind: "TraderHour" | "TraderDay", market: string, sinceSec: number) =>
   fetchAll<BucketRow>(kind, `{market: {_eq: "${address(market)}"}, periodStart: {_gte: ${int(sinceSec)}}}`, BUCKET_FIELDS);
 
-export const getMarketHours = (market: string, sinceSec: number) =>
+// Traders with any single hour at or above minFills, so day buckets can apply
+// the same per-hour machine-speed test as hour buckets.
+export const getBusyHourTraders = async (market: string, sinceSec: number, minFills: number) =>
+  new Set(
+    (
+      await fetchAll<{ trader: string }>(
+        "TraderHour",
+        `{market: {_eq: "${address(market)}"}, periodStart: {_gte: ${int(sinceSec)}}, fills: {_gte: ${int(minFills)}}}`,
+        "trader",
+      )
+    ).map((r) => r.trader),
+  );
+
+export const getMarketHours =(market: string, sinceSec: number) =>
   fetchAll<MarketHourRow>(
     "MarketHour",
     `{market: {_eq: "${address(market)}"}, periodStart: {_gte: ${int(sinceSec)}}}`,

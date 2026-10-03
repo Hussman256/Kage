@@ -67,7 +67,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
-- **Envio indexer: code-complete, not deployed.** 10-03: `start_block` set to **109880000** (2026-10-02 11:17 UTC, ~24h, ~50k events) so it can go on the **free plan now** while waiting for hackathon credits; when credits land, set it back to **107600000** for a full 7D. The leaderboard clamps its SINCE label to the first indexed hour, so a short backfill isn't presented as 7 days. (`indexer/`, see its README). Indexes Kuru `Trade` only → `TakerTrade`, `Trader` (maker/taker counts), `TraderHour`/`TraderDay` buckets, `MarketHour`. Aggregation in `indexer/src/aggregate.ts` was replayed against ~500 live trades: bucket PnL matches the per-fill method to 1e-12. The handler is only type-checked against a stub of envio's API: `envio` has no Windows binary and there's no Docker/WSL, so codegen and the first real run happen on Envio Cloud.
+- **Envio indexer: LIVE on the free Development plan (10-03).** Project `hussman256/kage`, branch `envio`, deployment `cdcd2c4`, endpoint `https://indexer.dev.hyperindex.xyz/02d5db6/v1/graphql` (set in `mobile/.env.local`). Synced 100% in ~1 min: **~15.3k events for 24h** — Kuru volume is lower than the 25k–75k/day estimate, so the 100k free cap lasts ~5–6 days and an 8-day backfill would be ~120k. Plan limits: 100 queries/min, 750 indexing hours. All app queries verified against it (1H/24H/7D boards + trader page). **The deployment endpoint changes on every redeploy** — "Promote" in the Envio dashboard gives a static production endpoint; do that before baking the URL into an APK. Earlier note: `start_block` set to **109880000** (2026-10-02 11:17 UTC, ~24h, ~50k events) so it can go on the **free plan now** while waiting for hackathon credits; when credits land, set it back to **107600000** for a full 7D. The leaderboard clamps its SINCE label to the first indexed hour, so a short backfill isn't presented as 7 days. (`indexer/`, see its README). Indexes Kuru `Trade` only → `TakerTrade`, `Trader` (maker/taker counts), `TraderHour`/`TraderDay` buckets, `MarketHour`. Aggregation in `indexer/src/aggregate.ts` was replayed against ~500 live trades: bucket PnL matches the per-fill method to 1e-12. The handler is only type-checked against a stub of envio's API: `envio` has no Windows binary and there's no Docker/WSL, so codegen and the first real run happen on Envio Cloud.
 - **App side done:** `mobile/src/lib/kuru/indexer.ts` (GraphQL client, paging, bot candidates) + leaderboard rewritten for 1H/24H/7D (indexer for all windows when `EXPO_PUBLIC_INDEXER_URL` is set, otherwise 1H over RPC). Smart money window chips work, show "SINCE hh:mm UTC" for bucketed windows; trader page follows the window it was opened from. Untested against a live endpoint, so check the Hasura query shapes on first deploy.
 - **Hosting decision pending (user):** Kuru does ~25k–75k Trade events/day; Envio's free plan soft-limits at 100k events (then 7d grace + 3d read-only + deletion; 30-day max). Options: Envio hackathon credits (ask sponsor), Production Small $70/mo (~1M events), or self-host.
 
@@ -83,7 +83,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 ## 4. Next steps (in order)
 
 1. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
-2. Deploy the Envio indexer on the free plan with the 24h backfill (needs the user's Envio login, §5); swap to the 8-day start block when credits arrive, set `EXPO_PUBLIC_INDEXER_URL`, verify queries on device. Then consider moving the live feed's backfill to the indexer. Nansen when the key arrives.
+2. Indexer is live. Before ~10-08 (free cap): get credits or upgrade, then redeploy with the 8-day start block and Promote for a static endpoint, set `EXPO_PUBLIC_INDEXER_URL`, verify queries on device. Then consider moving the live feed's backfill to the indexer. Nansen when the key arrives.
 3. Preview APK (then set `NEXT_PUBLIC_APK_URL`), demo, submission write-up.
 
 ---
@@ -95,7 +95,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - [ ] **Privy dashboard:** enable **Passkey** login; add an **app client** (mobile/React Native) with allowed app identifier **`xyz.usekage.app`**; send the **App ID** and **Client ID** (public IDs). After the first build: add the Android **SHA-256** key hash under allowed Android key hashes.
 - [ ] **Vercel account** (free) for the website.
 - [ ] **Nansen API key** — ask the hackathon sponsor desk / Discord.
-- [ ] **Envio:** log in at envio.dev with GitHub (Hussman256), install the Envio Deployments app on `Hussman256/Kage`, add indexer (dir `indexer`, config `config.yaml`, dedicated branch e.g. `envio`). **Ask Envio's sponsor desk for a hackathon plan/credits**: the free plan's 100k-event cap is ~1–4 days of Kuru trades.
+- [x] ~~**Envio:** log in~~ (done 10-03; still waiting on credits) — at envio.dev with GitHub (Hussman256), install the Envio Deployments app on `Hussman256/Kage`, add indexer (dir `indexer`, config `config.yaml`, dedicated branch e.g. `envio`). **Ask Envio's sponsor desk for a hackathon plan/credits**: the free plan's 100k-event cap is ~1–4 days of Kuru trades.
 
 ---
 
@@ -181,4 +181,5 @@ cd /c/Users/pc/Kage && npm run dev
 | 10-01 | Order placement code-complete: Book on real copies, cancel / cancel all, stale flags, withdraw. Pushed. |
 | 10-02 | Envio indexer written (`indexer/`, not deployed: no Windows binary, hosting decision pending). App: 1H/24H/7D leaderboards via indexer, RPC fallback; block time fixed to 300 ms. Pushed. |
 | 10-03 | Envio credits still pending → indexer set to a 24h backfill for the free plan; leaderboard labels true data start. App icon + light/dark splash; usekage.xyz landing/download page + assetlinks.json; trader gradient fix. Pushed. |
+| 10-03 | Indexer deployed to Envio free plan (24h backfill, synced), app wired to it and verified for all windows; 7D now applies the per-hour bot test (a 276-fills/hour wallet was ranking #2). Pushed. |
 | 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |

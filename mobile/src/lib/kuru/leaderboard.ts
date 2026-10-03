@@ -147,10 +147,14 @@ async function buildFromIndexer(market: KuruMarket, window: Window, p: MarketPar
     const len = window === "24H" ? HOUR : DAY;
     const span = window === "24H" ? DAY : 7 * DAY;
     since = Math.floor((nowSec - span) / len) * len;
-    const [buckets, hours] = await Promise.all([
+    const [buckets, hours, busy] = await Promise.all([
       idx.getBuckets(window === "24H" ? "TraderHour" : "TraderDay", market.address, since),
       idx.getMarketHours(market.address, since),
+      // Day buckets hide a machine-speed hour inside a quiet day, so 7D checks
+      // hourly buckets directly (24H already ranks hour buckets).
+      window === "7D" ? idx.getBusyHourTraders(market.address, since, HIGH_FREQ_FILLS_PER_HOUR) : new Set<string>(),
     ]);
+    for (const trader of busy) fillsPerTrader.set(trader, { fills: Infinity, hours: 1 });
     // Mark each bucket at the market's last price at the end of that period.
     const marks = new Map<number, number>();
     hours.sort((a, b) => a.periodStart - b.periodStart);
