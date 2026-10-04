@@ -3,6 +3,7 @@ import { BLOCK_MS, MAX_LOG_RANGE, publicClient } from "@/lib/monad";
 import { flagHighFrequency, HIGH_FREQ_FILLS_PER_HOUR, isVanityAddress } from "./bots";
 import * as idx from "./indexer";
 import { MARKETS, marketByAddress, type KuruMarket } from "./markets";
+import { getSmartMoney, type NansenStatus } from "@/lib/nansen";
 import { getBestBidAsk, getMarketParams, orderBookAbi, sizeAmount, wadPrice, type MarketParams } from "./orderbook";
 
 // "Top PnL (beta)" — the build plan's honest fallback while Nansen isn't wired.
@@ -54,6 +55,7 @@ export type TraderStats = {
   positions: Position[]; // markets traded, biggest volume first
   curve: number[]; // cumulative estimated PnL, per trade (1H) or per bucket
   recent: Fill[]; // newest first; filled in by getTrader for bucketed windows
+  nansenLabel: string | null; // e.g. "Smart Trader", when Nansen labels this wallet
 };
 
 export type Leaderboard = {
@@ -65,6 +67,7 @@ export type Leaderboard = {
   fillsSeen: number;
   botsExcluded: number; // market makers + vanity-address and machine-speed takers
   fetchedAt: number;
+  nansen: NansenStatus;
 };
 
 type MarketCtx = { market: KuruMarket; p: MarketParams; mid: number | null };
@@ -106,7 +109,7 @@ function rank(byTrader: Steps, ctxs: MarketCtx[]) {
       if (fills[m] > 0) positions.push({ market: ctxs[m].market, fills: fills[m], volumeQuote: vol[m], netBase: net[m], pnlQuote: cash[m] + net[m] * mid(m) });
     }
     positions.sort((a, b) => b.volumeQuote - a.volumeQuote);
-    traders.push({ rank: 0, address, fills: totalFills, volumeQuote: volume, pnlQuote: pnl, positions, curve, recent: [] });
+    traders.push({ rank: 0, address, fills: totalFills, volumeQuote: volume, pnlQuote: pnl, positions, curve, recent: [], nansenLabel: null });
   }
   traders.sort((a, b) => b.pnlQuote - a.pnlQuote);
   traders.forEach((t, i) => (t.rank = i + 1));
@@ -145,7 +148,9 @@ async function botSet() {
   return bots;
 }
 
-async function buildFromIndexer(ctxs: MarketCtx[], window: Window): Promise<Leaderboard> {
+type Board = Omit<Leaderboard, "nansen">;
+
+async function buildFromIndexer(ctxs: MarketCtx[], window: Window): Promise<Board> {
   const nowSec = Math.floor(Date.now() / 1000);
   const bots = await botSet();
   const skipped = new Set<string>();
@@ -284,7 +289,7 @@ async function fetchTrades(markets: Address[], from: bigint, to: bigint) {
   return out;
 }
 
-async function buildFromRpc(ctxs: MarketCtx[]): Promise<Leaderboard> {
+async function buildFromRpc(ctxs: MarketCtx[]): Promise<Board> {
   const head = await publicClient.getBlock({ blockTag: "latest" });
   const headMs = Number(head.timestamp) * 1000;
   const at = (block: bigint) => headMs - Number(head.number - block) * BLOCK_MS;
@@ -354,8 +359,12 @@ async function marketCtx(market: KuruMarket): Promise<MarketCtx> {
 
 async function build(window: Window): Promise<Leaderboard> {
   if (!windowAvailable(window)) throw new Error(`${window} rankings need the Envio indexer`);
+  const smartMoney = getSmartMoney(); // never throws
   const ctxs = await Promise.all(MARKETS.map(marketCtx));
-  return idx.indexerEnabled ? buildFromIndexer(ctxs, window) : buildFromRpc(ctxs);
+  const board = await (idx.indexerEnabled ? buildFromIndexer(ctxs, window) : buildFromRpc(ctxs));
+  const { status, labels } = await smartMoney;
+  for (const t of board.traders) t.nansenLabel = labels.get(t.address.toLowerCase()) ?? null;
+  return { ...board, nansen: status };
 }
 
 const cache = new Map<Window, { at: number; promise: Promise<Leaderboard> }>();

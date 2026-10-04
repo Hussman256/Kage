@@ -86,6 +86,11 @@ export default function TraderDetail() {
             <Mono style={{ fontSize: 10, letterSpacing: 0.5, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, overflow: "hidden", backgroundColor: t.a10, color: t.ink3 }}>
               {`#${trader.rank} TOP PNL (BETA)`}
             </Mono>
+            {trader.nansenLabel && (
+              <Mono style={{ fontSize: 10, letterSpacing: 0.5, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, overflow: "hidden", backgroundColor: t.purpTint18, color: t.purpInk }}>
+                {`NANSEN · ${trader.nansenLabel.toUpperCase()}`}
+              </Mono>
+            )}
             {trader.positions.map((p) => (
               <Mono
                 key={p.market.address}
@@ -102,7 +107,7 @@ export default function TraderDetail() {
         )}
 
         <View style={{ marginTop: 16, marginHorizontal: -20 }}>
-          <DataBadge label={`${WINDOW_TEXT[window]} OF KURU FILLS · NANSEN LABELS NOT WIRED YET`} />
+          <DataBadge label={`${WINDOW_TEXT[window]} OF KURU FILLS · ${state?.board.nansen.live ? "LABELS FROM NANSEN" : "NANSEN LABELS NOT WIRED YET"}`} />
         </View>
 
         {error && <Mono style={{ fontSize: 11, lineHeight: 17, color: t.berryInk }}>{`Couldn't load this trader: ${error.slice(0, 120)}`}</Mono>}

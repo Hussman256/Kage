@@ -41,6 +41,10 @@ export default function SmartMoney() {
   const [note, setNote] = useState<string | null>(null);
   // Long boards render in pages so the first paint stays quick.
   const [shown, setShown] = useState(PAGE);
+  const [smartOnly, setSmartOnly] = useState(false);
+  const nansen = data?.nansen.live ? data.nansen : null;
+  const labelled = data?.traders.filter((r) => r.nansenLabel) ?? [];
+  const list = (nansen && smartOnly ? labelled : data?.traders) ?? [];
 
   return (
     <ScrollView
@@ -53,7 +57,7 @@ export default function SmartMoney() {
           <View style={{ flex: 1 }}>
             <T style={{ fontSize: 30, fontFamily: fonts.semibold, letterSpacing: -1.05 }}>Smart money</T>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8 }}>
-              <Mono style={{ fontSize: 11, letterSpacing: 0.9, color: t.ink5 }}>TOP PNL (BETA) · KURU</Mono>
+              <Mono style={{ fontSize: 11, letterSpacing: 0.9, color: t.ink5 }}>{nansen ? "TOP PNL · NANSEN LABELS" : "TOP PNL (BETA) · KURU"}</Mono>
               <PulseDot color={error ? t.berryInk : t.grn} active={!!data && !error} duration={2200} />
               <Mono style={{ fontSize: 11, letterSpacing: 0.9, color: t.ink5 }}>{error ? "OFFLINE" : "LIVE"}</Mono>
             </View>
@@ -91,7 +95,35 @@ export default function SmartMoney() {
         {note && <Mono style={{ marginTop: 10, fontSize: 10.5, lineHeight: 16, color: t.ink4 }}>{note}</Mono>}
       </View>
 
-      <DataBadge label="ESTIMATED PNL FROM ON-CHAIN FILLS · NANSEN NOT WIRED YET" />
+      <DataBadge
+        label={
+          nansen
+            ? `ESTIMATED PNL FROM ON-CHAIN FILLS · LABELS FROM NANSEN (${nansen.wallets} SMART-MONEY WALLETS ACTIVE ON MONAD, 24H)`
+            : "ESTIMATED PNL FROM ON-CHAIN FILLS · NANSEN NOT WIRED YET"
+        }
+      />
+
+      {nansen && (
+        <View style={{ flexDirection: "row", gap: 8, marginHorizontal: 22, marginBottom: 14 }}>
+          {([false, true] as const).map((only) => {
+            const active = smartOnly === only;
+            return (
+              <Pressable
+                key={String(only)}
+                onPress={() => setSmartOnly(only)}
+                style={{ paddingVertical: 7, paddingHorizontal: 12, borderRadius: 999, backgroundColor: active ? t.purpTint18 : "transparent", borderWidth: 1, borderColor: active ? "rgba(131,110,249,.45)" : t.a15 }}
+              >
+                <Mono style={{ fontSize: 10.5, color: active ? t.purpInk : t.ink3 }}>{only ? `NANSEN SMART MONEY · ${labelled.length}` : "ALL TRADERS"}</Mono>
+              </Pressable>
+            );
+          })}
+        </View>
+      )}
+      {nansen && smartOnly && data && labelled.length === 0 && (
+        <Mono style={{ marginHorizontal: 22, marginBottom: 14, fontSize: 11, lineHeight: 17, color: t.ink4 }}>
+          {`None of the ${nansen.wallets} Nansen smart-money wallets active on Monad traded on Kuru ${data.window === "1H" ? "in the last hour" : "in this window"}.`}
+        </Mono>
+      )}
 
       {data && (
         <Mono style={{ marginHorizontal: 22, marginBottom: 14, fontSize: 10.5, lineHeight: 16, color: t.ink6 }}>
@@ -124,7 +156,7 @@ ${sinceLabel(data.since)} · ENVIO INDEXER`}
       )}
 
       <View style={{ paddingHorizontal: 22, gap: 12 }}>
-        {data?.traders.slice(0, shown).map((r) => (
+        {list.slice(0, shown).map((r) => (
           <Pressable key={r.address} onPress={() => router.push({ pathname: "/trader/[handle]", params: { handle: r.address, window: win } })}>
             {({ pressed }) => (
               <ShadowPlate>
@@ -139,7 +171,9 @@ ${sinceLabel(data.since)} · ENVIO INDEXER`}
                   <View style={{ flex: 1, minWidth: 0 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                       <Mono numberOfLines={1} style={{ fontSize: 14, fontFamily: fonts.monoSemibold, flexShrink: 1 }}>{shortAddr(r.address)}</Mono>
-                      {isFollowing(r.address) ? (
+                      {r.nansenLabel ? (
+                        <Chip label={r.nansenLabel.toUpperCase()} bg={t.purpTint18} color={t.purpInk} />
+                      ) : isFollowing(r.address) ? (
                         <Chip label="FOLLOWING" bg={t.purpTint18} color={t.purpInk} />
                       ) : (
                         <Chip label="TOP PNL" bg={t.a10} color={t.ink4} />
@@ -156,12 +190,12 @@ ${sinceLabel(data.since)} · ENVIO INDEXER`}
             )}
           </Pressable>
         ))}
-        {data && data.traders.length > shown && (
+        {list.length > shown && (
           <Pressable
-            onPress={() => setShown(data.traders.length)}
+            onPress={() => setShown(list.length)}
             style={{ alignSelf: "center", marginTop: 4, paddingVertical: 10, paddingHorizontal: 18, borderRadius: 999, borderWidth: 1, borderColor: t.a15 }}
           >
-            <Mono style={{ fontSize: 11, color: t.ink2 }}>{`SHOW ALL ${data.traders.length} TRADERS`}</Mono>
+            <Mono style={{ fontSize: 11, color: t.ink2 }}>{`SHOW ALL ${list.length} TRADERS`}</Mono>
           </Pressable>
         )}
       </View>
