@@ -8,7 +8,7 @@ import { ReadyModal } from "@/components/ready-modal";
 import { Avatar, Chip, DataBadge, Mono, SideChip, T } from "@/components/ui";
 import { SettingsButton } from "@/components/visuals";
 import { useFollows } from "@/lib/follows";
-import { fmtAge, fmtAmount, fmtPrice, shortAddr } from "@/lib/format";
+import { fmtAge, fmtPrice, fmtSize, shortAddr } from "@/lib/format";
 import type { LiveTrade } from "@/lib/kuru/live-trades";
 import { MARKETS } from "@/lib/kuru/markets";
 import { useLeaderboard } from "@/lib/kuru/use-leaderboard";
@@ -102,7 +102,7 @@ export default function Feed() {
           </View>
         </View>
         <Mono style={{ fontSize: 11.5, color: t.ink5, marginTop: 9 }}>
-          {follows.size} shadows followed · {MARKETS.map((m) => m.pair).join(" · ")}
+          {follows.size} shadows followed · {MARKETS.map((m) => m.base).join(" · ")} on Kuru
         </Mono>
         <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
           {chip("following", `FOLLOWING · ${follows.size}`)}
@@ -167,7 +167,7 @@ export default function Feed() {
                   <T style={{ fontSize: 17, fontFamily: fonts.semibold, letterSpacing: -0.35 }}>{x.pair}</T>
                 </View>
                 <Mono style={{ fontSize: 12.5, color: t.ink3, marginTop: 9 }}>
-                  {fmtAmount(x.size)} {x.base} @ {fmtPrice(x.price)}
+                  {fmtSize(x.size)} {x.base} @ {fmtPrice(x.price)}
                 </Mono>
               </View>
               <Pressable

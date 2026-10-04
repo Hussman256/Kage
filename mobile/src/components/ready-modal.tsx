@@ -1,7 +1,7 @@
 import * as WebBrowser from "expo-web-browser";
 import { Modal, Pressable, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { fmtAmount, fmtPrice } from "@/lib/format";
+import { fmtAmount, fmtPrice, fmtSize } from "@/lib/format";
 import { monad } from "@/lib/monad";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
@@ -35,11 +35,11 @@ export function ReadyModal({ outcome, onClose }: { outcome: CopyOutcome | null; 
   const rows: [string, string, string][] = [
     ["PAIR", order.pair, t.ink],
     ["SIDE", order.isBuy ? "BUY LIMIT" : "SELL LIMIT", order.isBuy ? t.grn : t.berryInk],
-    ["YOUR ORDER", `${fmtAmount(size)} ${order.base} @ ${fmtPrice(price, 6)}`, t.ink],
+    ["YOUR ORDER", `${fmtSize(size)} ${order.base} @ ${fmtPrice(price)}`, t.ink],
     ...(r
       ? ([
-          ["FILLED NOW", `${fmtAmount(r.filledSize)} ${order.base}`, r.filledSize > 0 ? t.grn : t.ink4],
-          ["RESTING", `${fmtAmount(r.restingSize)} ${order.base}`, r.restingSize > 0 ? t.ink : t.ink4],
+          ["FILLED NOW", `${fmtSize(r.filledSize)} ${order.base}`, r.filledSize > 0 ? t.grn : t.ink4],
+          ["RESTING", `${fmtSize(r.restingSize)} ${order.base}`, r.restingSize > 0 ? t.ink : t.ink4],
         ] as [string, string, string][])
       : ([["VALUE", `≈ ${fmtAmount(price * size)} USDC`, t.ink]] as [string, string, string][])),
     ["SHADOWING", order.who, t.ink],

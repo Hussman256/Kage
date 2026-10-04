@@ -12,6 +12,8 @@ import { useLeaderboard } from "@/lib/kuru/use-leaderboard";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
 
+const PAGE = 40;
+
 const WINDOW_TEXT: Record<Window, { since: string; per: string }> = {
   "1H": { since: "IN THE LAST HOUR", per: "1h" },
   "24H": { since: "IN THE LAST 24H", per: "24h" },
@@ -37,6 +39,8 @@ export default function SmartMoney() {
   const data = board?.window === win ? board : null;
   const { isFollowing } = useFollows();
   const [note, setNote] = useState<string | null>(null);
+  // Long boards render in pages so the first paint stays quick.
+  const [shown, setShown] = useState(PAGE);
 
   return (
     <ScrollView
@@ -68,6 +72,7 @@ export default function SmartMoney() {
                   if (available) {
                     setWin(w);
                     setNote(null);
+                    setShown(PAGE);
                   } else {
                     setNote(`${w} rankings need the Envio indexer, which isn't connected in this build. Showing the last hour.`);
                   }
@@ -90,7 +95,7 @@ export default function SmartMoney() {
 
       {data && (
         <Mono style={{ marginHorizontal: 22, marginBottom: 14, fontSize: 10.5, lineHeight: 16, color: t.ink6 }}>
-          {`${data.fillsSeen.toLocaleString("en-US")} FILLS${data.window === "1H" ? ` ${WINDOW_TEXT[win].since}` : ""} · ${data.botsExcluded} BOTS EXCLUDED · MARKED AT ${data.mid.toFixed(5)}`}
+          {`${data.fillsSeen.toLocaleString("en-US")} FILLS${data.window === "1H" ? ` ${WINDOW_TEXT[win].since}` : ""} · ${data.botsExcluded} BOTS EXCLUDED · ${data.markets.length} MARKETS`}
           {data.window === "1H" ? "" : `
 ${sinceLabel(data.since)} · ENVIO INDEXER`}
         </Mono>
@@ -119,7 +124,7 @@ ${sinceLabel(data.since)} · ENVIO INDEXER`}
       )}
 
       <View style={{ paddingHorizontal: 22, gap: 12 }}>
-        {data?.traders.slice(0, 25).map((r) => (
+        {data?.traders.slice(0, shown).map((r) => (
           <Pressable key={r.address} onPress={() => router.push({ pathname: "/trader/[handle]", params: { handle: r.address, window: win } })}>
             {({ pressed }) => (
               <ShadowPlate>
@@ -140,7 +145,7 @@ ${sinceLabel(data.since)} · ENVIO INDEXER`}
                         <Chip label="TOP PNL" bg={t.a10} color={t.ink4} />
                       )}
                     </View>
-                    <Mono numberOfLines={1} style={{ fontSize: 11, color: t.ink5, marginTop: 5 }}>{r.fills} fills / {WINDOW_TEXT[win].per}</Mono>
+                    <Mono numberOfLines={1} style={{ fontSize: 11, color: t.ink5, marginTop: 5 }}>{`${r.fills} fills / ${WINDOW_TEXT[win].per} · ${r.positions.map((p) => p.market.base).join(" ")}`}</Mono>
                   </View>
                   <View style={{ alignItems: "flex-end" }}>
                     <Mono style={{ fontSize: 15, fontFamily: fonts.monoSemibold, color: r.pnlQuote >= 0 ? t.grn : t.berryInk }}>{fmtSignedUsd(r.pnlQuote)}</Mono>
@@ -151,6 +156,14 @@ ${sinceLabel(data.since)} · ENVIO INDEXER`}
             )}
           </Pressable>
         ))}
+        {data && data.traders.length > shown && (
+          <Pressable
+            onPress={() => setShown(data.traders.length)}
+            style={{ alignSelf: "center", marginTop: 4, paddingVertical: 10, paddingHorizontal: 18, borderRadius: 999, borderWidth: 1, borderColor: t.a15 }}
+          >
+            <Mono style={{ fontSize: 11, color: t.ink2 }}>{`SHOW ALL ${data.traders.length} TRADERS`}</Mono>
+          </Pressable>
+        )}
       </View>
     </ScrollView>
   );

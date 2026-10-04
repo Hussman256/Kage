@@ -1,7 +1,12 @@
 export const fmtAmount = (n: number, decimals = 2) =>
   n.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
-export const fmtPrice = (n: number, decimals = 5) => n.toFixed(decimals);
+// Precision follows magnitude, so one formatter fits MON (~0.03) and cbBTC
+// (~85,000): "0.031066", "2.4100", "84773.26".
+export const fmtPrice = (n: number) => n.toFixed(Math.abs(n) >= 100 ? 2 : Math.abs(n) >= 1 ? 4 : 6);
+
+// Base-asset sizes: "1,250.00" MON, "2.500" WETH, "0.000125" cbBTC.
+export const fmtSize = (n: number) => fmtAmount(n, Math.abs(n) >= 100 ? 2 : Math.abs(n) >= 1 ? 3 : 6);
 
 // "+$32.71" / "−$4.10"
 export const fmtSignedUsd = (n: number) => `${n >= 0 ? "+" : "−"}$${fmtAmount(Math.abs(n))}`;

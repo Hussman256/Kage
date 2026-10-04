@@ -6,7 +6,7 @@ import type { Address } from "viem";
 import { copySize, type CopySize } from "@/lib/copy-sizing";
 import { useSession } from "@/lib/auth";
 import { useCopies } from "@/lib/copies";
-import { fmtAmount, fmtPrice, shortAddr } from "@/lib/format";
+import { fmtAmount, fmtPrice, fmtSize, shortAddr } from "@/lib/format";
 import { CopyStepError, executeCopy, type CopyResult } from "@/lib/kuru/execute";
 import { recordCopy } from "@/lib/kuru/guards";
 import type { TxStep } from "@/lib/kuru/trading";
@@ -168,7 +168,7 @@ export function CopySheet({
                   <T style={{ fontSize: 19, fontFamily: fonts.semibold, letterSpacing: -0.4 }}>{order.pair}</T>
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 14 }}>
-                  <Mono style={{ fontSize: 12.5, color: t.ink3 }}>{fmtAmount(order.size)} {order.base}</Mono>
+                  <Mono style={{ fontSize: 12.5, color: t.ink3 }}>{fmtSize(order.size)} {order.base}</Mono>
                   <Mono style={{ fontSize: 12.5, color: t.ink3 }}>@ {fmtPrice(order.price)}</Mono>
                 </View>
               </View>
@@ -207,7 +207,7 @@ export function CopySheet({
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
                   <View>
                     <Mono style={{ fontSize: 10, letterSpacing: 1, color: t.purpInk }}>YOUR SIZE</Mono>
-                    <Mono style={{ fontSize: 31, fontFamily: fonts.monoSemibold, marginTop: 7, letterSpacing: -0.6 }}>{fmtAmount(copy.size)}</Mono>
+                    <Mono style={{ fontSize: 31, fontFamily: fonts.monoSemibold, marginTop: 7, letterSpacing: -0.6 }}>{fmtSize(copy.size)}</Mono>
                   </View>
                   <View style={{ alignItems: "flex-end" }}>
                     <Mono style={{ fontSize: 11.5, color: t.ink2, lineHeight: 22 }}>{order.base}</Mono>
@@ -216,7 +216,7 @@ export function CopySheet({
                 </View>
                 {(copy.capped || copy.belowMin) && (
                   <Mono style={{ marginTop: 10, fontSize: 10, letterSpacing: 0.5, color: copy.belowMin ? t.berryInk : t.ink4 }}>
-                    {copy.belowMin ? `BELOW KURU MINIMUM OF ${fmtAmount(order.minSize)} ${order.base}` : "CAPPED AT YOUR MAX ORDER SIZE"}
+                    {copy.belowMin ? `BELOW KURU MINIMUM OF ${fmtSize(order.minSize)} ${order.base}` : "CAPPED AT YOUR MAX ORDER SIZE"}
                   </Mono>
                 )}
               </LinearGradient>
@@ -225,7 +225,7 @@ export function CopySheet({
                 {[
                   [
                     "YOUR ORDER",
-                    `${order.isBuy ? "BUY" : "SELL"} LIMIT @ ${fmtPrice(preflight?.plan.price ?? order.price, 6)}`,
+                    `${order.isBuy ? "BUY" : "SELL"} LIMIT @ ${fmtPrice(preflight?.plan.price ?? order.price)}`,
                     order.isBuy ? t.grn : t.berryInk,
                   ],
                   ["DRIFT GUARD", settings.driftGuard ? `${settings.driftGuardPct}%` : "OFF", settings.driftGuard ? t.ink : t.ink4],

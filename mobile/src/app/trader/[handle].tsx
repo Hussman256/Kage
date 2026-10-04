@@ -7,7 +7,7 @@ import Svg, { Polyline } from "react-native-svg";
 import { Avatar, DataBadge, Mono, SideChip, T } from "@/components/ui";
 import { GhostButton, PrimaryButton } from "@/components/visuals";
 import { useFollows } from "@/lib/follows";
-import { fmtAge, fmtAmount, fmtCompactUsd, fmtPrice, fmtSignedUsd, shortAddr } from "@/lib/format";
+import { fmtAge, fmtCompactUsd, fmtPrice, fmtSignedUsd, fmtSize, shortAddr } from "@/lib/format";
 import { getTrader, WINDOWS, type Leaderboard, type TraderStats, type Window } from "@/lib/kuru/leaderboard";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
@@ -86,15 +86,18 @@ export default function TraderDetail() {
             <Mono style={{ fontSize: 10, letterSpacing: 0.5, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, overflow: "hidden", backgroundColor: t.a10, color: t.ink3 }}>
               {`#${trader.rank} TOP PNL (BETA)`}
             </Mono>
-            <Mono
-              style={{
-                fontSize: 10, letterSpacing: 0.5, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, overflow: "hidden",
-                backgroundColor: trader.netBase >= 0 ? "rgba(131,110,249,.2)" : "rgba(160,5,93,.22)",
-                color: trader.netBase >= 0 ? t.purpInk : t.berryInk,
-              }}
-            >
-              {`NET ${trader.netBase >= 0 ? "LONG" : "SHORT"} ${fmtAmount(Math.abs(trader.netBase), 0)} ${state!.board.market.base}`}
-            </Mono>
+            {trader.positions.map((p) => (
+              <Mono
+                key={p.market.address}
+                style={{
+                  fontSize: 10, letterSpacing: 0.5, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, overflow: "hidden",
+                  backgroundColor: p.netBase >= 0 ? "rgba(131,110,249,.2)" : "rgba(160,5,93,.22)",
+                  color: p.netBase >= 0 ? t.purpInk : t.berryInk,
+                }}
+              >
+                {`NET ${p.netBase >= 0 ? "LONG" : "SHORT"} ${fmtSize(Math.abs(p.netBase))} ${p.market.base}`}
+              </Mono>
+            ))}
           </View>
         )}
 
@@ -129,6 +132,21 @@ export default function TraderDetail() {
               </Svg>
             </View>
 
+            {trader.positions.length > 1 && (
+              <View style={{ marginTop: 18 }}>
+                <Mono style={{ fontSize: 10, letterSpacing: 1, color: t.ink5, marginBottom: 12 }}>BY MARKET</Mono>
+                <View style={{ gap: 9 }}>
+                  {trader.positions.map((p) => (
+                    <View key={p.market.address} style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                      <Mono style={{ flex: 1, fontSize: 12, color: t.ink2 }}>{p.market.pair}</Mono>
+                      <Mono style={{ fontSize: 11, color: t.ink5 }}>{`${p.fills} fills`}</Mono>
+                      <Mono style={{ width: 96, textAlign: "right", fontSize: 12, color: p.pnlQuote >= 0 ? t.grn : t.berryInk }}>{fmtSignedUsd(p.pnlQuote)}</Mono>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
             <View style={{ marginTop: 18 }}>
               <Mono style={{ fontSize: 10, letterSpacing: 1, color: t.ink5, marginBottom: 12 }}>RECENT FILLS</Mono>
               <View style={{ gap: 11 }}>
@@ -141,7 +159,7 @@ export default function TraderDetail() {
                     </Mono>
                     <SideChip isBuy={f.isBuy} text={f.isBuy ? "BUY" : "SELL"} />
                     <Mono style={{ flex: 1, fontSize: 12, color: t.ink2 }} numberOfLines={1}>
-                      {fmtAmount(f.size)} {state!.board.market.base} @ {fmtPrice(f.price)}
+                      {fmtSize(f.size)} {f.market.base} @ {fmtPrice(f.price)}
                     </Mono>
                   </View>
                 ))}

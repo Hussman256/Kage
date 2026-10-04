@@ -1,6 +1,6 @@
 # Kage indexer (Envio HyperIndex)
 
-Indexes Kuru's MON/USDC order book on Monad mainnet (chain 143) for the Kage app:
+Indexes Kuru's order books on Monad mainnet (chain 143) for the Kage app: MON/USDC, cbBTC/USDC, WETH/USDC and XAUt0/USDC (every Kuru market with trades as of 2026-10-03).
 
 - `TakerTrade`: one trader's fills in one tx on one side, merged (volume-weighted). Feeds 1H rankings and trader pages.
 - `TraderHour` / `TraderDay`: per-trader buy/sell buckets. Feed the 24H and 7D leaderboards.
@@ -26,4 +26,4 @@ pnpm dev        # Hasura at http://localhost:8080, password: testing
 3. Push to that branch. Every push re-indexes from `start_block`, which costs events and uses one of 3 deployment slots, so only push there on purpose.
 4. Copy the GraphQL endpoint into `mobile/.env.local` as `EXPO_PUBLIC_INDEXER_URL`.
 
-Volume: Kuru MON/USDC does roughly 25k–75k `Trade` events a day. The free Development plan soft-limits at 100k events processed (then 7 days' grace, 3 days read-only, deletion) and deletes any deployment after 30 days. An 8-day backfill will exceed that limit straight away.
+Volume (measured 2026-10-03): MON/USDC does ~15k `Trade` events a day and the other three markets add ~40%, so ~21k/day in total. The free Development plan soft-limits at 100k events processed (then 7 days' grace, 3 days read-only, deletion) and deletes any deployment after 30 days, so a free deployment lasts about 4–5 days before the grace period starts.

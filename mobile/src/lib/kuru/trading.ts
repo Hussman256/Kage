@@ -102,7 +102,7 @@ export async function planCopyOrder(input: {
 
   // What the margin account must hold for this order to rest:
   //   buy  → quote (USDC) = price × size (+ taker fee if it matches immediately)
-  //   sell → base (MON)   = size
+  //   sell → base (MON, WETH…) = size
   const fundingToken = isBuy ? params.quoteAsset : params.baseAsset;
   const fundingSymbol = isBuy ? input.quoteSymbol : input.baseSymbol;
   let fundingNeeded: bigint;
@@ -119,11 +119,13 @@ export async function planCopyOrder(input: {
   const shortfall = fundingNeeded > bal.margin ? fundingNeeded - bal.margin : BigInt(0);
   const reserve = parseUnits(String(GAS_RESERVE_MON), 18);
   const native = fundingToken === zeroAddress;
+  // Selling spends the base token (MON, WETH, cbBTC…), buying spends USDC.
+  const fundingDecimals = isBuy ? params.quoteDecimals : params.baseDecimals;
   const walletSpendable = native ? (bal.wallet > reserve ? bal.wallet - reserve : BigInt(0)) : bal.wallet;
 
   if (shortfall > walletSpendable) {
-    const have = Number(formatUnits(bal.margin + walletSpendable, native ? 18 : params.quoteDecimals));
-    problems.push(`Not enough ${fundingSymbol}: this copy needs ${formatUnits(fundingNeeded, native ? 18 : params.quoteDecimals)}, you have ${have.toFixed(native ? 2 : 2)} available${native ? ` (keeping ${GAS_RESERVE_MON} MON for gas)` : ""}.`);
+    const have = Number(formatUnits(bal.margin + walletSpendable, fundingDecimals));
+    problems.push(`Not enough ${fundingSymbol}: this copy needs ${formatUnits(fundingNeeded, fundingDecimals)}, you have ${have.toFixed(fundingDecimals > 6 ? 4 : 2)} available${native ? ` (keeping ${GAS_RESERVE_MON} MON for gas)` : ""}.`);
   }
   if (!native && bal.nativeWallet < reserve) problems.push(`Keep at least ${GAS_RESERVE_MON} MON in your wallet for gas.`);
 
@@ -132,7 +134,7 @@ export async function planCopyOrder(input: {
     if (!native && bal.allowance < shortfall) {
       steps.push({
         kind: "approve",
-        label: `Allow Kuru to use ${formatUnits(shortfall, params.quoteDecimals)} ${fundingSymbol}`,
+        label: `Allow Kuru to use ${formatUnits(shortfall, fundingDecimals)} ${fundingSymbol}`,
         to: fundingToken,
         // Exact amount, never an unlimited approval.
         data: encodeFunctionData({ abi: erc20Abi, functionName: "approve", args: [KURU_MARGIN_ACCOUNT, shortfall] }),
@@ -141,7 +143,7 @@ export async function planCopyOrder(input: {
     }
     steps.push({
       kind: "deposit",
-      label: `Deposit ${formatUnits(shortfall, native ? 18 : params.quoteDecimals)} ${fundingSymbol} to Kuru`,
+      label: `Deposit ${formatUnits(shortfall, fundingDecimals)} ${fundingSymbol} to Kuru`,
       to: KURU_MARGIN_ACCOUNT,
       data: encodeFunctionData({ abi: marginAccountAbi, functionName: "deposit", args: [user, fundingToken, shortfall] }),
       value: native ? shortfall : BigInt(0),

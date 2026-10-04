@@ -6,7 +6,7 @@ import { DataBadge, Mono, SideChip, T } from "@/components/ui";
 import { SettingsButton } from "@/components/visuals";
 import { useSession } from "@/lib/auth";
 import { useCopies, type CopyRecord } from "@/lib/copies";
-import { fmtAge, fmtAmount, fmtPrice, fmtSignedUsd, shortAddr } from "@/lib/format";
+import { fmtAge, fmtPrice, fmtSize, fmtSignedUsd, shortAddr } from "@/lib/format";
 import { driftPct } from "@/lib/kuru/guards";
 import { getBestBidAsk } from "@/lib/kuru/orderbook";
 import { cancelCopies, isExpired, readCopyStatus, type CopyStatus } from "@/lib/kuru/positions";
@@ -185,7 +185,7 @@ export default function Book() {
                     <Mono style={{ fontSize: 10.5, color: stale ? t.berryInk : t.ink5 }}>{stale ?? fmtAge(now - c.createdAt)}</Mono>
                   </View>
                   <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 12 }}>
-                    <Mono style={{ fontSize: 12, color: t.ink3 }}>{fmtAmount(c.size)} @ {fmtPrice(c.price, 6)}</Mono>
+                    <Mono style={{ fontSize: 12, color: t.ink3 }}>{fmtSize(c.size)} @ {fmtPrice(c.price)}</Mono>
                     <Mono style={{ fontSize: 12, color: t.ink2 }}>{Math.round(pct * 100)}% filled</Mono>
                   </View>
                   <View style={{ height: 3, borderRadius: 999, backgroundColor: t.a10, marginTop: 11, overflow: "hidden" }}>

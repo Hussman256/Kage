@@ -22,3 +22,6 @@ chains:
       - name: KuruOrderBook
         address:
           - "0x065c9d28e428a0db40191a54d33d5b7c71a9c394" # MON/USDC
+          - "0x40c49f171202f91ff5d2fae34c22dd2bfdd22af0" # cbBTC/USDC
+          - "0xa6afd386135b7d41a6c40c525abc4a1019b0d132" # WETH/USDC
+          - "0x851145eaefdc37956b08da829fa31722199f3f07" # XAUt0/USDC

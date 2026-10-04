@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 import type { Address } from "viem";
 import { useSession } from "@/lib/auth";
-import { fmtAmount } from "@/lib/format";
+import { fmtAmount, fmtSize } from "@/lib/format";
 import { readKuruFunds, withdrawAllFunds, type KuruFunds } from "@/lib/kuru/funds";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
@@ -51,10 +51,11 @@ export function KuruFundsSection() {
     <View style={{ gap: 12 }}>
       <T style={{ fontSize: 14.5, fontFamily: fonts.medium }}>Funds on Kuru</T>
       {!funds && !message && <Mono style={{ fontSize: 11, color: t.ink5 }}>Loading…</Mono>}
-      {funds?.map((f) => (
+      {/* USDC and MON always; other markets' tokens only when there's a balance. */}
+      {funds?.filter((f) => f.amount > 0 || f.symbol === "USDC" || f.symbol === "MON").map((f) => (
         <View key={f.token} style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Mono style={{ fontSize: 12, color: t.ink5 }}>{f.symbol}</Mono>
-          <Mono style={{ fontSize: 12 }}>{fmtAmount(f.amount, f.symbol === "USDC" ? 2 : 4)}</Mono>
+          <Mono style={{ fontSize: 12 }}>{f.symbol === "USDC" ? fmtAmount(f.amount) : fmtSize(f.amount)}</Mono>
         </View>
       ))}
       <Mono style={{ fontSize: 10.5, lineHeight: 16, color: t.ink6 }}>

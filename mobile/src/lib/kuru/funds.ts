@@ -10,12 +10,15 @@ import { marginAccountAbi } from "./trading";
 
 export type KuruFunds = { token: Address; symbol: string; amount: number }[];
 
+// USDC plus every market's base token, once each.
 async function fundTokens() {
-  const params = await getMarketParams(MARKETS[0].address);
-  return [
-    { token: params.quoteAsset, symbol: MARKETS[0].quote, decimals: params.quoteDecimals },
-    { token: params.baseAsset, symbol: MARKETS[0].base, decimals: params.baseDecimals },
-  ];
+  const all = await Promise.all(MARKETS.map(async (m) => ({ m, params: await getMarketParams(m.address) })));
+  const tokens = new Map<string, { token: Address; symbol: string; decimals: number }>();
+  for (const { m, params } of all) {
+    tokens.set(params.quoteAsset.toLowerCase(), { token: params.quoteAsset, symbol: m.quote, decimals: params.quoteDecimals });
+    tokens.set(params.baseAsset.toLowerCase(), { token: params.baseAsset, symbol: m.base, decimals: params.baseDecimals });
+  }
+  return [...tokens.values()];
 }
 
 export async function readKuruFunds(user: Address): Promise<KuruFunds> {

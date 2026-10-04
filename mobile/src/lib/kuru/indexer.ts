@@ -16,6 +16,7 @@ const MAX_PAGES = 40;
 const TIMEOUT_MS = 15_000;
 
 export type TakerTradeRow = {
+  market: string;
   trader: string;
   taker: string;
   isBuy: boolean;
@@ -87,7 +88,7 @@ async function fetchAll<T>(entity: string, where: string, fields: string): Promi
 }
 
 const BUCKET_FIELDS = "trader periodStart fills sizeBought sizeSold quoteBoughtWad quoteSoldWad";
-const TRADE_FIELDS = "trader taker isBuy size quoteWad fills timestamp txHash";
+const TRADE_FIELDS = "market trader taker isBuy size quoteWad fills timestamp txHash";
 
 export const getTakerTrades = (market: string, sinceSec: number) =>
   fetchAll<TakerTradeRow>(
@@ -128,9 +129,10 @@ export const getBotCandidates = () =>
     "id takerFills makerFills viaMakerFills",
   );
 
-export async function getRecentTrades(market: string, trader: string, limit: number) {
+// A trader's latest trades across every indexed market.
+export async function getRecentTrades(trader: string, limit: number) {
   const data = await gql<{ TakerTrade: TakerTradeRow[] }>(
-    `{ TakerTrade(where: {market: {_eq: "${address(market)}"}, trader: {_eq: "${address(trader)}"}}, order_by: {timestamp: desc}, limit: ${int(limit)}) { ${TRADE_FIELDS} } }`,
+    `{ TakerTrade(where: {trader: {_eq: "${address(trader)}"}}, order_by: {timestamp: desc}, limit: ${int(limit)}) { ${TRADE_FIELDS} } }`,
   );
   return data.TakerTrade;
 }
