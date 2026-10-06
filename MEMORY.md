@@ -173,6 +173,7 @@ cd /c/Users/pc/Kage && npm run dev
 - **Template:** recipe **kage-daily** frozen at `videos/kage-promo/.media/recipes/kage-daily` (v1). Say "make another kage-daily" / "like last time"; start new videos as sibling folders in `videos/`.
 - **Real app screens:** `node videos/capture-screens.mjs http://localhost:8090 light` drives the Expo **web** build (`cd mobile && CI=1 npx expo start --web --port 8090`) with headless system Chrome at 390×844 @3x; it warns if a dev error toast is in a shot. First request to a fresh web build compiles for 60s+.
 - **User preferences:** light mode; Yosuku (@yosuku0, 2nd in DeepBook track, Sui Overflow 2026) as the visual reference — big editorial type, one accent word, real phone screens; storyboard + sketches reviewed before building; silent (X autoplays muted). Commits/pushes at every checkpoint.
+- **10-06 graphic:** `videos/kage-day-1006/` — "22 wallets made 37% of Kuru's 22,316 fills in 24h · Kage ranks the other 390" (Envio numbers, 4 markets, since 14:00 UTC Oct 5). `capture.mjs` grabs Smart money (24H) + Feed from the web build; `render.mjs` → `graphic.png`. Stats query pages TraderHour (Hasura caps 1,000 rows) and applies the app's bot rules.
 - **Gotchas hit:** frame elements must each have their own `data-track-index` (assembler refuses shared lanes); fromTo on the same target twice → use `tl.to` for follow-ups; intentional glyph+shadow overlap needs `data-layout-allow-overlap` on both glyph elements; keep content above y=900.
 
 ## 9. Checkpoint log
