@@ -8,7 +8,7 @@
 > **Keep it current:** update the Status, Checkpoint log, and Next steps sections at every
 > checkpoint. Never put secrets here (API keys, private keys) — public IDs only.
 
-_Last updated: 2026-10-04_
+_Last updated: 2026-10-06_
 
 ---
 
@@ -64,6 +64,9 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - **App icon + splash** (10-03): 影 mark with purple offset shadow on #0A0512, adaptive-icon layers, light/dark splash. Regenerate with `node videos/make-icons.mjs`. Expo template images and the iOS `expo.icon` bundle removed.
 - **usekage.xyz website** (10-03): `/` is now the landing + APK download page (button live once `NEXT_PUBLIC_APK_URL` is set; until then "Android build coming soon"). `public/.well-known/assetlinks.json` is in place (format checked against Android's Credential Manager docs) with a `REPLACE_WITH_EAS_SIGNING_SHA256` placeholder. The PWA install prompt was removed from the layout; old web screens remain at their routes.
 - Trader page header gradient now fades out fully (vertical axis).
+- **Feed history from Envio (10-06):** on open, the feed loads the latest 300 indexed trades (bots + vanity excluded *in the query*: Hasura caps rows at 1,000 and ~1/3 of trades are bots) plus up to 200 of each followed wallet's latest trades however old (the Feed passes follows via `setFollowed`). RPC then tails from ~600 blocks back and skips keys the indexer supplied. Keys are now `tx:trader:market`. Smoke-tested live in Node with tsx: 476 trades, 0 duplicate keys.
+- **Latency badge (10-06):** result screen shows "CONFIRMED IN n ms" (order tx broadcast → receipt, receipt polled every 100 ms; viem's default 4 s poll would have made it meaningless).
+- **README rewritten (10-06)** for the submission (architecture, sponsor integrations, run, limitations, AI disclosure); `mobile/README.md` replaced; stale testnet Kuru/Envio vars removed from `.env.local.example`. **`SUBMISSION.md`**: paste-ready project profile text with TODO links (APK, demo video). Public Metropolis pages state no AI-disclosure rule (form is behind login); we disclose voluntarily.
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
 
 ### 🔄 In progress
@@ -84,6 +87,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 
 ## 4. Next steps (in order)
 
+0. **Not domain-blocked, do now:** user logs in to Expo (`npx eas-cli@latest login`) → `eas init` → **preview APK** build (`eas build -p android --profile preview`, runs in paper mode without passkeys) so the demo can be recorded on a real install. Envio cap (~10-08): credits or upgrade. Nansen key. Demo video.
 1. When the user delivers the §5 items: `eas init`, first **development build** on EAS → get the signing SHA-256 → write `public/.well-known/assetlinks.json` in the web app → deploy to usekage.xyz → add the SHA-256 to Privy → set `mobile/.env.local` → test real passkey login + a real small trade.
 2. Indexer is live. Before ~10-08 (free cap): get credits or upgrade, then redeploy with the 8-day start block and Promote for a static endpoint, set `EXPO_PUBLIC_INDEXER_URL`, verify queries on device. Then consider moving the live feed's backfill to the indexer. Nansen when the key arrives.
 3. Preview APK (then set `NEXT_PUBLIC_APK_URL`), demo, submission write-up.
@@ -185,4 +189,5 @@ cd /c/Users/pc/Kage && npm run dev
 | 10-03 | Envio credits still pending → indexer set to a 24h backfill for the free plan; leaderboard labels true data start. App icon + light/dark splash; usekage.xyz landing/download page + assetlinks.json; trader gradient fix. Pushed. |
 | 10-03 | Indexer deployed to Envio free plan (24h backfill, synced), app wired to it and verified for all windows; 7D now applies the per-hour bot test (a 276-fills/hour wallet was ranking #2). Pushed. |
 | 10-04 | All four Kuru markets indexed and ranked (cross-market PnL, full list); Nansen smart-money route + app labels, waiting on a key; indexer redeployed (`5ef1264`). Pushed. |
+| 10-06 | Feed backfills from Envio (followed wallets' history + recent, bots filtered in-query); "CONFIRMED IN n ms" on results; README + SUBMISSION.md for the write-up. User will buy the domain later; work proceeds on everything else. Pushed. |
 | 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |
