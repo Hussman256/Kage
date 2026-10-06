@@ -17,6 +17,9 @@ export type CopyResult = {
   orderId: bigint | null; // set when part of the order rests on the book
   filledSize: number; // base units filled immediately
   restingSize: number; // base units left on the book
+  // Broadcast → receipt for the order tx, timed on the phone (receipt polled
+  // every 100 ms, so it can read up to ~100 ms high).
+  confirmMs: number | null;
   stepTxs: { step: TxStep; hash: Hash }[];
 };
 
@@ -39,6 +42,7 @@ export async function executeCopy(
   if (plan.problems.length) throw new Error(plan.problems[0]);
   const stepTxs: CopyResult["stepTxs"] = [];
   let orderTx: Hash | null = null;
+  let confirmMs: number | null = null;
 
   for (const step of plan.steps) {
     onStep?.(step, "signing");
@@ -49,9 +53,11 @@ export async function executeCopy(
       throw new CopyStepError(step, e instanceof Error ? e.message : String(e));
     }
     onStep?.(step, "confirming");
+    const sentAt = Date.now();
     let receipt;
     try {
-      receipt = await publicClient.waitForTransactionReceipt({ hash, timeout: 60_000 });
+      // viem's default 4 s poll would swamp Monad's ~300 ms blocks.
+      receipt = await publicClient.waitForTransactionReceipt({ hash, timeout: 60_000, pollingInterval: 100 });
     } catch {
       // Sent but unconfirmed: it may still land, so don't claim it failed.
       throw new CopyStepError(step, "UNCONFIRMED", hash);
@@ -59,7 +65,10 @@ export async function executeCopy(
     if (receipt.status !== "success") throw new CopyStepError(step, `${step.label} failed on-chain`, hash);
     stepTxs.push({ step, hash });
     onStep?.(step, "done");
-    if (step.kind === "order") orderTx = hash;
+    if (step.kind === "order") {
+      orderTx = hash;
+      confirmMs = Date.now() - sentAt;
+    }
   }
 
   if (!orderTx) throw new Error("Plan had no order step");
@@ -86,5 +95,5 @@ export async function executeCopy(
     }
   }
 
-  return { orderTx, orderId, filledSize, restingSize, stepTxs };
+  return { orderTx, orderId, filledSize, restingSize, confirmMs, stepTxs };
 }

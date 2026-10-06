@@ -139,20 +139,11 @@ const toFill = (r: idx.TakerTradeRow, market: KuruMarket, p: MarketParams): Fill
   return { market, at: r.timestamp * 1000, isBuy: r.isBuy, price: size ? quote(r.quoteWad, p) / size : 0, size, txHash: r.txHash };
 };
 
-async function botSet() {
-  const bots = new Set<string>();
-  for (const r of await idx.getBotCandidates()) {
-    // Market makers, or wallets whose taker flow mostly runs through one.
-    if (r.makerFills >= idx.MARKET_MAKER_MIN_FILLS || r.viaMakerFills * 2 > r.takerFills) bots.add(r.id);
-  }
-  return bots;
-}
-
 type Board = Omit<Leaderboard, "nansen">;
 
 async function buildFromIndexer(ctxs: MarketCtx[], window: Window): Promise<Board> {
   const nowSec = Math.floor(Date.now() / 1000);
-  const bots = await botSet();
+  const bots = await idx.getIndexedBots();
   const skipped = new Set<string>();
   const byTrader: Steps = new Map();
   const add = adder(byTrader);

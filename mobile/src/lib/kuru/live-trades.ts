@@ -1,6 +1,7 @@
-import type { Address, Hash } from "viem";
+import { formatUnits, type Address, type Hash } from "viem";
 import { BLOCK_MS, MAX_LOG_RANGE, publicClient } from "@/lib/monad";
 import { isLikelyBot, isVanityAddress } from "./bots";
+import * as idx from "./indexer";
 import { MARKETS, marketByAddress } from "./markets";
 import { getMarketParams, orderBookAbi, sizeAmount, wadPrice, type MarketParams } from "./orderbook";
 
@@ -10,10 +11,12 @@ import { getMarketParams, orderBookAbi, sizeAmount, wadPrice, type MarketParams 
 // shows what traders actually do — their fills — and copying one places the
 // user's own limit order at the trader's price.
 //
-// Direct RPC stopgap until the Envio indexer exists.
+// With the Envio indexer configured, the feed opens with indexed history (the
+// last two hours, plus followed wallets' latest trades however old) and RPC
+// tails new blocks. Without it, RPC backfills ~15 minutes.
 
 export type LiveTrade = {
-  key: string; // `${txHash}:${trader}` — one market order can fill several maker orders
+  key: string; // `${txHash}:${trader}:${market}` — one market order can fill several maker orders
   txHash: Hash;
   market: Address;
   pair: string;
@@ -37,7 +40,10 @@ export type TradesSnapshot = {
 
 const POLL_MS = 1200;
 const BACKFILL_BLOCKS = BigInt(3000); // ~15 minutes, so the feed isn't empty on open
+const INDEXED_RPC_BACKFILL = BigInt(600); // ~3 minutes: covers indexer lag
+const INDEXER_HISTORY_SEC = 2 * 3600;
 const MAX_TRADES = 300;
+const FOLLOWED_PER_LOAD = 200;
 
 const trades = new Map<string, LiveTrade & { notional: number }>();
 const bots = new Set<string>(); // anyone seen providing resting liquidity
@@ -47,6 +53,13 @@ let lastBlock: bigint | null = null;
 let headRef: { block: bigint; time: number } | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
 let polling = false;
+// Keys loaded from the indexer, so RPC doesn't add their fills a second time.
+const indexed = new Set<string>();
+let indexerLoaded = false;
+let followed = new Set<string>();
+let followedLoaded = "";
+
+const tradeKey = (tx: string, trader: string, market: string) => `${tx}:${trader.toLowerCase()}:${market.toLowerCase()}`;
 
 const estimateTime = (block: bigint) => (headRef ? headRef.time - Number(headRef.block - block) * BLOCK_MS : Date.now());
 
@@ -60,10 +73,78 @@ function publish(patch: Partial<TradesSnapshot>) {
   listeners.forEach((l) => l());
 }
 
+// Followed wallets' trades are kept however old; everyone else's are capped.
 function prune() {
-  if (trades.size <= MAX_TRADES) return;
-  const oldest = Array.from(trades.values()).sort((a, b) => (a.block < b.block ? -1 : 1));
-  for (const t of oldest.slice(0, trades.size - MAX_TRADES)) trades.delete(t.key);
+  const others = Array.from(trades.values()).filter((t) => !followed.has(t.trader.toLowerCase()));
+  if (others.length <= MAX_TRADES) return;
+  others.sort((a, b) => (a.block < b.block ? -1 : 1));
+  for (const t of others.slice(0, others.length - MAX_TRADES)) {
+    trades.delete(t.key);
+    indexed.delete(t.key);
+  }
+}
+
+function addIndexed(rows: idx.FeedTradeRow[], params: Map<string, MarketParams>) {
+  for (const r of rows) {
+    const market = marketByAddress(r.market);
+    const p = params.get(r.market.toLowerCase());
+    if (!market || !p || isVanityAddress(r.trader)) continue;
+    const key = tradeKey(r.txHash, r.trader, r.market);
+    if (trades.has(key)) continue;
+    const size = Number(formatUnits(BigInt(r.size), p.sizeDecimals));
+    const notional = Number(formatUnits(BigInt(r.quoteWad), 18 + p.sizeDecimals));
+    if (!size) continue;
+    indexed.add(key);
+    trades.set(key, {
+      key,
+      txHash: r.txHash as Hash,
+      market: market.address,
+      pair: market.pair,
+      base: market.base,
+      trader: r.trader as Address,
+      isBuy: r.isBuy,
+      size,
+      price: notional / size,
+      notional,
+      fills: r.fills,
+      block: BigInt(r.blockNumber),
+      at: r.timestamp * 1000,
+      minSize: sizeAmount(p.minSize, p),
+    });
+  }
+}
+
+// Indexed history on first open. Failures fall back to RPC-only quietly: the
+// feed still works, just with less history.
+async function loadIndexed(params: Map<string, MarketParams>) {
+  if (!idx.indexerEnabled || indexerLoaded) return;
+  try {
+    const indexedBots = await idx.getIndexedBots();
+    indexedBots.forEach((b) => bots.add(b));
+    const sinceSec = Math.floor(Date.now() / 1000) - INDEXER_HISTORY_SEC;
+    addIndexed(await idx.getFeedTrades({ sinceSec, exclude: indexedBots, limit: MAX_TRADES }), params);
+    indexerLoaded = true;
+  } catch {
+    indexerLoaded = false;
+  }
+}
+
+async function loadFollowed(params: Map<string, MarketParams>) {
+  const list = [...followed].sort();
+  const sig = list.join(",");
+  if (!idx.indexerEnabled || !indexerLoaded || !list.length || sig === followedLoaded) return;
+  try {
+    addIndexed(await idx.getFeedTrades({ traders: list, exclude: bots, limit: FOLLOWED_PER_LOAD }), params);
+    followedLoaded = sig;
+  } catch {
+    // Retried next tick.
+  }
+}
+
+// Called by the Feed with the user's follows, so their history is loaded even
+// when they haven't traded in the last few hours.
+export function setFollowed(addresses: Iterable<string>) {
+  followed = new Set([...addresses].map((a) => a.toLowerCase()));
 }
 
 async function ingest(from: bigint, to: bigint, params: Map<string, MarketParams>) {
@@ -87,7 +168,8 @@ async function ingest(from: bigint, to: bigint, params: Map<string, MarketParams
 
     const size = sizeAmount(log.args.filledSize!, p);
     const price = wadPrice(log.args.price!);
-    const key = `${log.transactionHash}:${origin.toLowerCase()}`;
+    const key = tradeKey(log.transactionHash, origin, log.address);
+    if (indexed.has(key)) continue;
     const existing = trades.get(key);
     if (existing) {
       existing.size += size;
@@ -121,11 +203,15 @@ async function tick() {
     const params = new Map<string, MarketParams>();
     await Promise.all(MARKETS.map(async (m) => params.set(m.address.toLowerCase(), await getMarketParams(m.address))));
 
+    await loadIndexed(params);
+    await loadFollowed(params);
+
     const head = await publicClient.getBlockNumber({ cacheTime: 0 });
     headRef = { block: head, time: Date.now() };
     // After a pause (backgrounded, no subscribers) skip ahead instead of
     // replaying a long gap 100 blocks at a time.
-    let from = lastBlock === null || head - lastBlock > BACKFILL_BLOCKS ? head - BACKFILL_BLOCKS : lastBlock + BigInt(1);
+    const backfill = indexerLoaded ? INDEXED_RPC_BACKFILL : BACKFILL_BLOCKS;
+    let from = lastBlock === null || head - lastBlock > backfill ? head - backfill : lastBlock + BigInt(1);
 
     while (from <= head) {
       const to = from + MAX_LOG_RANGE - BigInt(1) < head ? from + MAX_LOG_RANGE - BigInt(1) : head;

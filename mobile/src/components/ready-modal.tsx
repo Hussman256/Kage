@@ -40,6 +40,9 @@ export function ReadyModal({ outcome, onClose }: { outcome: CopyOutcome | null; 
       ? ([
           ["FILLED NOW", `${fmtSize(r.filledSize)} ${order.base}`, r.filledSize > 0 ? t.grn : t.ink4],
           ["RESTING", `${fmtSize(r.restingSize)} ${order.base}`, r.restingSize > 0 ? t.ink : t.ink4],
+          ...(r.confirmMs != null
+            ? ([["CONFIRMED IN", `${r.confirmMs.toLocaleString("en-US")} ms`, t.grn]] as [string, string, string][])
+            : []),
         ] as [string, string, string][])
       : ([["VALUE", `≈ ${fmtAmount(price * size)} USDC`, t.ink]] as [string, string, string][])),
     ["SHADOWING", order.who, t.ink],

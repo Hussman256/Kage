@@ -129,6 +129,35 @@ export const getBotCandidates = () =>
     "id takerFills makerFills viaMakerFills",
   );
 
+// The same bot test the leaderboard applies: market makers, or wallets whose
+// taker flow mostly runs through one.
+export async function getIndexedBots() {
+  const bots = new Set<string>();
+  for (const r of await getBotCandidates()) {
+    if (r.makerFills >= MARKET_MAKER_MIN_FILLS || r.viaMakerFills * 2 > r.takerFills) bots.add(r.id);
+  }
+  return bots;
+}
+
+export type FeedTradeRow = TakerTradeRow & { blockNumber: number };
+
+// Newest trades across every market, optionally only from some wallets.
+// Excluded wallets and vanity (0x000…) addresses are filtered server-side so
+// bots don't eat the row limit.
+export async function getFeedTrades(opts: { sinceSec?: number; traders?: string[]; exclude?: Iterable<string>; limit: number }) {
+  const where: string[] = [];
+  const exclude = [...(opts.exclude ?? [])];
+  const traderWhere = ['_nlike: "0x000%"'];
+  if (exclude.length) traderWhere.push(`_nin: [${exclude.map((a) => `"${address(a)}"`).join(", ")}]`);
+  if (opts.sinceSec !== undefined) where.push(`timestamp: {_gte: ${int(opts.sinceSec)}}`);
+  if (opts.traders) traderWhere.push(`_in: [${opts.traders.map((a) => `"${address(a)}"`).join(", ")}]`);
+  where.push(`trader: {${traderWhere.join(", ")}}`);
+  const data = await gql<{ TakerTrade: FeedTradeRow[] }>(
+    `{ TakerTrade(where: {${where.join(", ")}}, order_by: {timestamp: desc}, limit: ${int(opts.limit)}) { ${TRADE_FIELDS} blockNumber } }`,
+  );
+  return data.TakerTrade;
+}
+
 // A trader's latest trades across every indexed market.
 export async function getRecentTrades(trader: string, limit: number) {
   const data = await gql<{ TakerTrade: TakerTradeRow[] }>(

@@ -9,7 +9,8 @@ import { Avatar, Chip, DataBadge, Mono, SideChip, T } from "@/components/ui";
 import { SettingsButton } from "@/components/visuals";
 import { useFollows } from "@/lib/follows";
 import { fmtAge, fmtPrice, fmtSize, shortAddr } from "@/lib/format";
-import type { LiveTrade } from "@/lib/kuru/live-trades";
+import { indexerEnabled } from "@/lib/kuru/indexer";
+import { setFollowed, type LiveTrade } from "@/lib/kuru/live-trades";
 import { MARKETS } from "@/lib/kuru/markets";
 import { useLeaderboard } from "@/lib/kuru/use-leaderboard";
 import { useLiveTrades } from "@/lib/kuru/use-live-trades";
@@ -40,6 +41,9 @@ export default function Feed() {
   const [scope, setScope] = useState<"following" | "all" | null>(null);
   const [copying, setCopying] = useState<CopySource | null>(null);
   const [outcome, setOutcome] = useState<CopyOutcome | null>(null);
+
+  // Lets the feed load followed wallets' indexed history, not just new trades.
+  useEffect(() => setFollowed(follows), [follows]);
 
   // Default to Following once the user follows anyone.
   const active = scope ?? (follows.size > 0 ? "following" : "all");
@@ -133,8 +137,12 @@ export default function Feed() {
         {status !== "live"
           ? "Reading Kuru trades…"
           : active === "following"
-            ? "No trades from the wallets you follow in the last few minutes. New ones appear here live."
-            : "No trades in the last few minutes."}
+            ? indexerEnabled
+              ? "No indexed trades from the wallets you follow yet. New ones appear here live."
+              : "No trades from the wallets you follow in the last few minutes. New ones appear here live."
+            : indexerEnabled
+              ? "No trades in the last two hours."
+              : "No trades in the last few minutes."}
       </Mono>
     );
 
