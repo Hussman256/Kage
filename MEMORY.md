@@ -101,7 +101,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - [x] ~~**Expo account** at expo.dev, then log in~~ (done 10-12; account `hussein256`, project `@hussein256/kage` linked).
 - [ ] **Privy dashboard:** enable **Passkey** login; add an **app client** (mobile/React Native) with allowed app identifier **`xyz.usekage.app`**; send the **App ID** and **Client ID** (public IDs). After the first build: add the Android **SHA-256** key hash under allowed Android key hashes.
 - [ ] **Vercel account** (free) for the website.
-- [ ] **Nansen API key** — free account at app.nansen.ai → generate API key (free plan is enough). Put it in the repo-root `.env.local` as `NANSEN_API_KEY` (server-only), run `npm run dev`, and set `EXPO_PUBLIC_KAGE_API_URL=http://<PC LAN IP>:3000` in `mobile/.env.local`. Later: same env var on Vercel.
+- [x] ~~**Nansen API key**~~ (done 10-12; key tested live and verified returning Monad DEX smart-money labels). Configured in repo root `.env.local` as `NANSEN_API_KEY`.
 - [x] ~~**Envio:** log in~~ (done 10-03; still waiting on credits) — at envio.dev with GitHub (Hussman256), install the Envio Deployments app on `Hussman256/Kage`, add indexer (dir `indexer`, config `config.yaml`, dedicated branch e.g. `envio`). **Ask Envio's sponsor desk for a hackathon plan/credits**: the free plan's 100k-event cap is ~1–4 days of Kuru trades.
 
 ---
