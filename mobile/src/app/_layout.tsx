@@ -71,9 +71,9 @@ export default function RootLayout() {
   );
 }
 
-// Privy is required lazily: its passkey dependency is a native module that
+// Mera is required lazily: its passkey dependency is a native module that
 // doesn't exist in Expo Go, so importing it there would crash the app.
 const AuthProvider: (props: { children: ReactNode }) => ReactNode = authEnabled
   ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- conditional load, see above
-    require("@/lib/privy").PrivyAuthProvider
+    require("@/lib/mera").MeraAuthProvider
   : ({ children }) => children;

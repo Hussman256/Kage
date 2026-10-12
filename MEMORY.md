@@ -21,8 +21,8 @@ traders ranked by **Nansen smart-money labels**, not raw self-reported PnL.
 Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 
 - **Hackathon:** Monad Metropolis, Track 1 (Onchain Finance & Trading). **Deadline: Oct 13, 2026.**
-- **Sponsor bounties targeted:** Kuru, Nansen AI, Envio, Privy — each must be genuinely integrated and called out in the submission.
-- **Non-custodial:** every order is signed by the user's own Privy embedded wallet. The app never holds or pools funds. If a design would require custody, stop and flag it.
+- **Sponsor bounties / integrations:** Kuru, Nansen AI, Envio, Mera (Category Labs) — each genuinely integrated and called out in the submission.
+- **Non-custodial:** every order is signed by the user's own Mera passkey-derived wallet via Viem. The app never holds or pools funds. If a design would require custody, stop and flag it.
 - **Owner:** GitHub `Hussman256/Kage` (remote `origin`).
 
 ---
@@ -99,7 +99,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 
 - [ ] **Buy `usekage.xyz`** (any registrar). Later: add DNS records for Vercel (values to be provided).
 - [x] ~~**Expo account** at expo.dev, then log in~~ (done 10-12; account `hussein256`, project `@hussein256/kage` linked).
-- [ ] **Privy dashboard:** enable **Passkey** login; add an **app client** (mobile/React Native) with allowed app identifier **`xyz.usekage.app`**; send the **App ID** and **Client ID** (public IDs). After the first build: add the Android **SHA-256** key hash under allowed Android key hashes.
+- [x] ~~**Passkeys (Mera / Category Labs)**~~ (done 10-12; switched from Privy to `@category-labs/mera` + `react-native-passkey`; derives self-custodial Viem accounts directly from device passkey biometrics via WebAuthn PRF, no 3rd party dashboard required).
 - [ ] **Vercel account** (free) for the website.
 - [x] ~~**Nansen API key**~~ (done 10-12; key tested live and verified returning Monad DEX smart-money labels). Configured in repo root `.env.local` as `NANSEN_API_KEY`.
 - [x] ~~**Envio:** log in~~ (done 10-03; still waiting on credits) — at envio.dev with GitHub (Hussman256), install the Envio Deployments app on `Hussman256/Kage`, add indexer (dir `indexer`, config `config.yaml`, dedicated branch e.g. `envio`). **Ask Envio's sponsor desk for a hackathon plan/credits**: the free plan's 100k-event cap is ~1–4 days of Kuru trades.
@@ -193,4 +193,5 @@ cd /c/Users/pc/Kage && npm run dev
 | 10-04 | All four Kuru markets indexed and ranked (cross-market PnL, full list); Nansen smart-money route + app labels, waiting on a key; indexer redeployed (`5ef1264`). Pushed. |
 | 10-06 | Feed backfills from Envio (followed wallets' history + recent, bots filtered in-query); "CONFIRMED IN n ms" on results; README + SUBMISSION.md for the write-up. User will buy the domain later; work proceeds on everything else. Pushed. |
 | 10-12 | EAS project linked (`@hussein256/kage`), Android keystore provisioned in cloud, Envio indexer URL added to preview profile in `eas.json`, and preview APK build queued on EAS (`c305bff5-0145-44ce-9b08-098663d0bb08`). |
+| 10-12 | Switched passkey auth from Privy to Mera (`@category-labs/mera` + `react-native-passkey`): native WebAuthn PRF key derivation into Viem `LocalAccount`, self-custodial execution on Monad without 3rd party custody. |
 | 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |

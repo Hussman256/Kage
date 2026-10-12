@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Mono, T } from "@/components/ui";
 import { Glow, KageMark, PrimaryButton } from "@/components/visuals";
 import { authEnabled, previewReason } from "@/lib/auth";
-import type { PasskeyFlow } from "@/lib/privy";
+import type { PasskeyFlow } from "@/lib/mera";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
 
@@ -13,7 +13,7 @@ const PROMISES = ["Your keys, your wallet — always", "Every order signed by yo
 
 // Loaded only when sign-in is enabled — see AuthProvider in app/_layout.tsx.
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- must not load in Expo Go
-const privy: typeof import("@/lib/privy") | null = authEnabled ? require("@/lib/privy") : null;
+const mera: typeof import("@/lib/mera") | null = authEnabled ? require("@/lib/mera") : null;
 
 function Notice({ tone, children }: { tone: "error" | "info"; children: string }) {
   const { t } = useTheme();
@@ -30,12 +30,12 @@ function Notice({ tone, children }: { tone: "error" | "info"; children: string }
   );
 }
 
-// Real passkey sign-in (dev build with Privy configured).
+// Real passkey sign-in (standalone/preview build with Mera).
 function PasskeyActions() {
   const [error, setError] = useState<string | null>(null);
-  const flow: PasskeyFlow = privy!.usePasskeyFlow({
+  const flow: PasskeyFlow = mera!.usePasskeyFlow({
     onDone: () => router.replace("/smart"),
-    onError: (e) => setError(privy!.describeAuthError(e)),
+    onError: (e) => setError(mera!.describeAuthError(e)),
   });
   return (
     <>

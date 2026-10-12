@@ -2,26 +2,20 @@ import Constants, { ExecutionEnvironment } from "expo-constants";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { TxSender } from "@/lib/kuru/execute";
 
-// One session shape for the whole app, whether sign-in is real (Privy
-// passkeys in the dev build) or unavailable (Expo Go, or setup incomplete).
+// One session shape for the whole app, whether sign-in is real (Mera
+// passkeys in the standalone/preview build) or unavailable (Expo Go).
 
-export const PRIVY_APP_ID = process.env.EXPO_PUBLIC_PRIVY_APP_ID ?? "";
-export const PRIVY_CLIENT_ID = process.env.EXPO_PUBLIC_PRIVY_CLIENT_ID ?? "";
-// Origin hosting /.well-known/assetlinks.json: https://usekage.xyz. Passkeys are
-// bound to this domain for good, so never switch it once users exist.
-export const PASSKEY_RELYING_PARTY = process.env.EXPO_PUBLIC_PASSKEY_RELYING_PARTY ?? "";
+export const PASSKEY_RELYING_PARTY = (process.env.EXPO_PUBLIC_PASSKEY_RELYING_PARTY || "usekage.xyz")
+  .replace(/^https?:\/\//, "")
+  .replace(/\/.*$/, "");
 
 const IS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 // Why real sign-in is off, or null when it's on. Expo Go can't load the native
-// passkey module, so Privy must never be imported there.
+// passkey module, so Mera must never be imported there.
 export const previewReason: string | null = IS_EXPO_GO
-  ? "Running in Expo Go — passkeys need the Kage development build."
-  : !PRIVY_APP_ID || !PRIVY_CLIENT_ID
-    ? "Privy app ID / client ID not configured."
-    : !PASSKEY_RELYING_PARTY
-      ? "Passkey domain not configured."
-      : null;
+  ? "Running in Expo Go — passkeys need the Kage preview/production build."
+  : null;
 
 export const authEnabled = previewReason === null;
 

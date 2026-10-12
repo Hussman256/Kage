@@ -33,7 +33,7 @@ Kage never holds funds and never signs in the background. Each copy is a transac
 - **Kuru.** Reads and writes on mainnet across MON/USDC, cbBTC/USDC, WETH/USDC and XAUt0/USDC. Writes cover order planning (exact approve, deposit only the shortfall, tick-rounded limit price), a dry-run against the live contract before signing, receipt decoding into filled vs resting, `batchCancelOrders`, live order state, and `batchWithdrawMaxTokens`. We verified the event ABI against live logs where it differs from the docs.
 - **Envio.** A HyperIndex project on Envio Cloud indexes every Kuru `Trade` into per-trade, per-hour and per-day trader aggregates, plus maker/taker counts. It powers the 24H/7D leaderboards, trader pages, bot detection and the Feed's history. The aggregation matches a per-fill replay of ~500 live trades to 1e-12.
 - **Nansen.** A server route calls `smart-money/dex-trades` for Monad (cached to fit the free plan's credits) and the app tags matching Kuru traders with their Nansen label, with a smart-money-only filter.
-- **Privy.** Expo SDK passkey login and sign-up with an embedded wallet. Every copy is signed by the user's own Privy wallet. No seed phrases, no custody.
+- **Mera (Category Labs).** Native passkey onboarding and account derivation via the WebAuthn PRF extension (`@category-labs/mera`). Every copy is signed by the user's own passkey-derived wallet via Viem. Truly self-custodial, no seed phrases, no third-party custody.
 
 ## What was built during Metropolis
 

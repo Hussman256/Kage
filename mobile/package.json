@@ -3,6 +3,7 @@
   "main": "entrypoint.js",
   "version": "1.0.0",
   "dependencies": {
+    "@category-labs/mera": "^0.2.0",
     "@ethersproject/shims": "^5.8.0",
     "@expo-google-fonts/geist": "^0.4.2",
     "@expo-google-fonts/geist-mono": "^0.4.3",
@@ -35,6 +36,7 @@
     "react-native": "0.86.3",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-get-random-values": "~1.11.0",
+    "react-native-passkey": "^3.6.2",
     "react-native-passkeys": "^0.4.2",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",

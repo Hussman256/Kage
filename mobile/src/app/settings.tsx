@@ -74,7 +74,7 @@ export default function Settings() {
               <Mono selectable style={{ fontSize: 11.5, color: t.ink3, marginTop: 6 }}>
                 {session.address ?? "Creating your wallet…"}
               </Mono>
-              <Mono style={{ fontSize: 10.5, color: t.ink6, marginTop: 6 }}>PRIVY EMBEDDED WALLET · SECURED BY YOUR PASSKEY</Mono>
+              <Mono style={{ fontSize: 10.5, color: t.ink6, marginTop: 6 }}>MERA PASSKEY WALLET · SECURED BY YOUR BIOMETRICS</Mono>
             </View>
             <Pressable
               onPress={async () => {
