@@ -68,6 +68,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 - **Latency badge (10-06):** result screen shows "CONFIRMED IN n ms" (order tx broadcast → receipt, receipt polled every 100 ms; viem's default 4 s poll would have made it meaningless).
 - **README rewritten (10-06)** for the submission (architecture, sponsor integrations, run, limitations, AI disclosure); `mobile/README.md` replaced; stale testnet Kuru/Envio vars removed from `.env.local.example`. **`SUBMISSION.md`**: paste-ready project profile text with TODO links (APK, demo video). Public Metropolis pages state no AI-disclosure rule (form is behind login); we disclose voluntarily.
 - Checks passing at last checkpoint: `tsc`, `expo lint`, `expo-doctor` (21/21), full `expo export --platform android`.
+- **Preview APK built on EAS (10-12):** standalone `.apk` built (`c305bff5-0145-44ce-9b08-098663d0bb08`) with Envio indexer URL embedded; direct download URL `https://expo.dev/artifacts/eas/JVqSWgsVvlw-v3BmD8wT6o8Nw_FWb9BlrRKw1sg0JPk.apk`; `NEXT_PUBLIC_APK_URL` configured.
 
 ### 🔄 In progress
 - **All four Kuru markets (10-04):** MON/USDC, cbBTC/USDC, WETH/USDC, XAUt0/USDC (found by scanning chain for the Trade topic; pairs from getMarketParams). Leaderboard sums each trader's PnL across markets (all USDC-quoted) with a per-market breakdown; Smart money shows every qualifying trader (paged 40). 1H 22→40 traders, 7D 126→180. Copy planning uses the funding token's decimals (sell side = base token); withdraw lists every market's tokens.
