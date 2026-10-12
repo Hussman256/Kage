@@ -8,7 +8,7 @@
 > **Keep it current:** update the Status, Checkpoint log, and Next steps sections at every
 > checkpoint. Never put secrets here (API keys, private keys) — public IDs only.
 
-_Last updated: 2026-10-06_
+_Last updated: 2026-10-12_
 
 ---
 
@@ -97,7 +97,7 @@ Tagline: *"Kage — copy the shadow of the smartest money on Monad."*
 ## 5. Waiting on the user (blockers for passkey login & real trades)
 
 - [ ] **Buy `usekage.xyz`** (any registrar). Later: add DNS records for Vercel (values to be provided).
-- [ ] **Expo account** at expo.dev, then log in: `cd /c/Users/pc/Kage/mobile && npx eas-cli@latest login`.
+- [x] ~~**Expo account** at expo.dev, then log in~~ (done 10-12; account `hussein256`, project `@hussein256/kage` linked).
 - [ ] **Privy dashboard:** enable **Passkey** login; add an **app client** (mobile/React Native) with allowed app identifier **`xyz.usekage.app`**; send the **App ID** and **Client ID** (public IDs). After the first build: add the Android **SHA-256** key hash under allowed Android key hashes.
 - [ ] **Vercel account** (free) for the website.
 - [ ] **Nansen API key** — free account at app.nansen.ai → generate API key (free plan is enough). Put it in the repo-root `.env.local` as `NANSEN_API_KEY` (server-only), run `npm run dev`, and set `EXPO_PUBLIC_KAGE_API_URL=http://<PC LAN IP>:3000` in `mobile/.env.local`. Later: same env var on Vercel.
@@ -191,4 +191,5 @@ cd /c/Users/pc/Kage && npm run dev
 | 10-03 | Indexer deployed to Envio free plan (24h backfill, synced), app wired to it and verified for all windows; 7D now applies the per-hour bot test (a 276-fills/hour wallet was ranking #2). Pushed. |
 | 10-04 | All four Kuru markets indexed and ranked (cross-market PnL, full list); Nansen smart-money route + app labels, waiting on a key; indexer redeployed (`5ef1264`). Pushed. |
 | 10-06 | Feed backfills from Envio (followed wallets' history + recent, bots filtered in-query); "CONFIRMED IN n ms" on results; README + SUBMISSION.md for the write-up. User will buy the domain later; work proceeds on everything else. Pushed. |
+| 10-12 | EAS project linked (`@hussein256/kage`), Android keystore provisioned in cloud, Envio indexer URL added to preview profile in `eas.json`, and preview APK build queued on EAS (`c305bff5-0145-44ce-9b08-098663d0bb08`). |
 | 10-01 | Marketing v1: HyperFrames promo (26.5s MP4) + X graphic, light mode; kage-daily recipe frozen; bot filter → 0x000; trader duplicate-key fix. Pushed. |
