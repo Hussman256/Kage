@@ -5,7 +5,7 @@
 **Project name:** Kage
 **Track:** 1 — Onchain Finance & Trading
 **Tagline:** Copy the shadow of the smartest money on Monad.
-**Links:** Android APK: https://expo.dev/artifacts/eas/WkLYmWZ3rSXhYlEkWzxEfKbJi01sAz0ndt3kudDBRnk.apk · Demo video: TODO · Code: https://github.com/Hussman256/Kage
+**Links:** Android APK: https://expo.dev/artifacts/eas/o0wwFUAiUj9nZKzpQzBJOobU4K-Hkf4E86msXd2gnzk.apk · Demo video: TODO · Code: https://github.com/Hussman256/Kage
 
 ---
 
