@@ -13,7 +13,9 @@
       "distribution": "internal",
       "android": { "buildType": "apk" },
       "env": {
-        "EXPO_PUBLIC_INDEXER_URL": "https://indexer.dev.hyperindex.xyz/b253d40/v1/graphql"
+        "EXPO_PUBLIC_INDEXER_URL": "https://indexer.dev.hyperindex.xyz/b253d40/v1/graphql",
+        "EXPO_PUBLIC_KAGE_API_URL": "https://kage-hazel-one.vercel.app",
+        "EXPO_PUBLIC_PASSKEY_RELYING_PARTY": "kage-hazel-one.vercel.app"
       }
     },
     "production": {

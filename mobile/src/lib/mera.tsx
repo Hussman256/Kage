@@ -183,7 +183,10 @@ export function usePasskeyFlow(opts: { onDone: () => void; onError: (e: unknown)
 
 export function describeAuthError(e: unknown): string {
   if (isMeraError(e)) {
-    if (e.code === "PASSKEY_OPERATION_FAILED") return "Passkey canceled or not available.";
+    if (e.code === "PASSKEY_OPERATION_FAILED") {
+      const cause = (e as unknown as { cause?: { message?: string } }).cause?.message;
+      return cause || e.message || "Passkey canceled or not available.";
+    }
     if (e.code === "PRF_UNAVAILABLE") return "Biometric security extension (PRF) not supported on this authenticator.";
     return `Passkey error: ${e.message}`;
   }
