@@ -4,7 +4,10 @@
     "target": {
       "namespace": "android_app",
       "package_name": "xyz.usekage.app",
-      "sha256_cert_fingerprints": ["83:03:B0:5D:C2:EC:DB:23:3E:4D:7C:A0:31:F8:04:CF:C4:D1:20:05:B3:7A:B5:12:D6:D3:07:0B:02:83:43:AE"]
+      "sha256_cert_fingerprints": [
+        "E0:BE:EE:13:D6:C8:8A:D1:63:2D:E7:64:5E:D9:F8:ED:57:C6:78:4E:F1:F1:30:DB:3C:8B:03:2C:16:A5:B5:4D",
+        "83:03:B0:5D:C2:EC:DB:23:3E:4D:7C:A0:31:F8:04:CF:C4:D1:20:05:B3:7A:B5:12:D6:D3:07:0B:02:83:43:AE"
+      ]
     }
   }
 ]
