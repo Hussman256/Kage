@@ -42,7 +42,7 @@ const fetchSmartMoney = unstable_cache(
       updatedAt: new Date().toISOString(),
       window: "24h",
       truncated: body?.pagination?.is_last_page === false,
-      wallets: [...byAddress.values()],
+      wallets: Array.from(byAddress.values()),
     };
   },
   ["nansen-smart-money-monad"],
