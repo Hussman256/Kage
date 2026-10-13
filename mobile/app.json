@@ -18,7 +18,21 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "xyz.usekage.app"
+      "package": "xyz.usekage.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "kage-hazel-one.vercel.app",
+              "pathPrefix": "/.well-known/assetlinks.json"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "output": "static",
@@ -38,7 +52,13 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "./plugins/withAssetStatements",
+        {
+          "domains": ["kage-hazel-one.vercel.app", "usekage.xyz"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
