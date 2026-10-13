@@ -4,7 +4,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "xyz.usekage.app",
-      "sha256_cert_fingerprints": ["REPLACE_WITH_EAS_SIGNING_SHA256"]
+      "sha256_cert_fingerprints": ["83:03:B0:5D:C2:EC:DB:23:3E:4D:7C:A0:31:F8:04:CF:C4:D1:20:05:B3:7A:B5:12:D6:D3:07:0B:02:83:43:AE"]
     }
   }
 ]
