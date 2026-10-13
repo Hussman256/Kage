@@ -8,10 +8,15 @@ export default function PrivyProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+  if (!appId || appId === "cl00000000000000000000000" || appId.length !== 25) {
+    return <>{children}</>;
+  }
+
   return (
     <BasePrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
-      clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID!}
+      appId={appId}
+      clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID || ""}
       config={{
         // Create embedded wallets for users who don't have a wallet
         embeddedWallets: {

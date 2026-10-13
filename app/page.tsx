@@ -22,8 +22,8 @@ const POINTS = [
 const STACK = [
   { name: "Kuru", note: "on-chain order book" },
   { name: "Envio", note: "trade indexer" },
-  { name: "Privy", note: "passkey wallets" },
-  { name: "Nansen", note: "smart-money labels (coming)" },
+  { name: "Mera (Category Labs)", note: "passkey wallets" },
+  { name: "Nansen", note: "smart-money labels" },
 ];
 
 export default function Home() {
