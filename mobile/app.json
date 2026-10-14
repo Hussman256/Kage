@@ -38,7 +38,13 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "./plugins/withAssetStatements",
+        {
+          "domains": ["kage-hazel-one.vercel.app", "usekage.xyz"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
