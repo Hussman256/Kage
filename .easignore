@@ -1,0 +1,25 @@
+# EAS ignore patterns
+videos
+videos/**
+.git
+.git/**
+.next
+.next/**
+.claude
+.claude/**
+.vercel
+.vercel/**
+app
+app/**
+components
+components/**
+lib
+lib/**
+public
+public/**
+indexer
+indexer/**
+node_modules
+node_modules/**
+*.md
+*.tsbuildinfo
