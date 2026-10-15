@@ -1,8 +1,11 @@
 import * as WebBrowser from "expo-web-browser";
 import { Modal, Pressable, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { useState } from "react";
 import { fmtAmount, fmtPrice, fmtSize } from "@/lib/format";
 import { monad } from "@/lib/monad";
+import { useRooms } from "@/lib/rooms";
 import { useTheme } from "@/theme/theme";
 import { fonts } from "@/theme/tokens";
 import type { CopyOutcome } from "./copy-sheet";
@@ -16,6 +19,8 @@ export function ReadyModal({ outcome, onClose }: { outcome: CopyOutcome | null; 
   const { t } = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const { shareSetup, activeRoom } = useRooms();
+  const [shared, setShared] = useState(false);
 
   if (!outcome) return <Modal visible={false} />;
   const { order } = outcome;
@@ -87,7 +92,25 @@ export function ReadyModal({ outcome, onClose }: { outcome: CopyOutcome | null; 
 
           <View style={{ gap: 11 }}>
             <PrimaryButton label="Back to feed" onPress={onClose} glow={false} />
-            <GhostButton label="Share into room ↗" disabled />
+            <GhostButton
+              label={shared ? `Shared into ${activeRoom.name} ✓` : `Share into ${activeRoom.name} ↗`}
+              disabled={shared}
+              onPress={() => {
+                shareSetup({
+                  author: "you",
+                  trader: order.trader,
+                  pair: order.pair,
+                  market: order.market,
+                  base: order.base,
+                  isBuy: order.isBuy,
+                  price,
+                  size,
+                  type: live && filledAll ? "copied" : "setup",
+                  ...(r?.confirmMs != null ? { confirmMs: r.confirmMs } : {}),
+                });
+                setShared(true);
+              }}
+            />
           </View>
         </View>
       </View>

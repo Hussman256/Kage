@@ -21,7 +21,7 @@ So Kage copies **trades**:
 
 ## Screens
 
-Splash → passkey onboarding → **Smart money** (1H / 24H / 7D leaderboard, Nansen filter) → **trader page** (PnL curve, per-market breakdown, net long/short, recent fills) → **Feed** (Following / All) → **copy sheet** (size from your ratio, capped by your max, live pre-flight checks) → **result** (filled now vs resting, tx link, confirm time) → **Book** (your copies, live fill progress, cancel / cancel all, stale flags) → **Settings** (appearance, risk controls, wallet, Kuru balances and withdraw). **Rooms** is a labelled preview.
+Splash → passkey onboarding → **Smart money** (1H / 24H / 7D leaderboard, Nansen filter) → **trader page** (PnL curve, per-market breakdown, net long/short, recent fills) → **Feed** (Following / All) → **copy sheet** (size from your ratio, capped by your max, live pre-flight checks) → **result** (filled now vs resting, tx link, confirm time) → **Book** (your copies, live fill progress, cancel / cancel all, stale flags) → **Settings** (appearance, risk controls, wallet, Kuru balances and withdraw) → **Rooms** (Dojo rooms, shared watchlist, shared setups feed).
 
 ## Architecture
 
@@ -98,7 +98,7 @@ Expo Go runs a labelled preview mode: Privy's native passkey module can't load t
 - **PnL is estimated**, from taker fills within the window, marked to the current mid price. Positions opened before the window start at zero.
 - **Bot filtering is heuristic.** It catches market makers, operator wallets, vanity addresses and machine-speed takers, but a slow, human-paced bot can still rank.
 - **Indexer history is limited** by the Envio free plan's event cap. The leaderboard shows "SINCE hh:mm UTC" rather than claiming a full 7 days.
-- **Rooms** is a static preview, labelled as such.
+- **Rooms (Dojo)** supports creating/joining rooms via codes, managing a shared trader watchlist, and posting/copying setups directly into the room.
 - No automated test suite. The checks are type-checking, lint, live dry-runs against the contract, and replaying the indexer aggregation against real logs.
 - Android only. iOS would need an Apple developer account.
 

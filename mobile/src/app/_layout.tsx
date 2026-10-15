@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { authEnabled, SessionProvider } from "@/lib/auth";
 import { CopiesProvider } from "@/lib/copies";
 import { FollowsProvider } from "@/lib/follows";
+import { RoomsProvider } from "@/lib/rooms";
 import { ThemeProvider, useTheme } from "@/theme/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -60,8 +61,10 @@ export default function RootLayout() {
           <AuthProvider>
             <FollowsProvider>
               <CopiesProvider>
-                {/* On a font load failure, fall back to system fonts rather than a blank app. */}
-                <Root fontsReady={fontsLoaded || !!fontError} />
+                <RoomsProvider>
+                  {/* On a font load failure, fall back to system fonts rather than a blank app. */}
+                  <Root fontsReady={fontsLoaded || !!fontError} />
+                </RoomsProvider>
               </CopiesProvider>
             </FollowsProvider>
           </AuthProvider>

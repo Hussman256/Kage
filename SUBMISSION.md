@@ -41,7 +41,7 @@ Everything in the repo was built during the build window, starting from Monad's 
 
 ## Known limitations
 
-PnL is estimated from fills within the window. Bot filtering is heuristic. Indexer history is limited by the Envio free plan's event cap, and the app shows the true data start. Rooms is a labelled preview. Android only.
+PnL is estimated from fills within the window. Bot filtering is heuristic. Indexer history is limited by the Envio free plan's event cap, and the app shows the true data start. Rooms supports creating/joining rooms with codes, maintaining a shared watchlist, and sharing setups directly into the room. Android only.
 
 ## AI disclosure
 
